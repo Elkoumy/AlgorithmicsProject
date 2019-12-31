@@ -1,5 +1,7 @@
 '''
 In this file, we are going to implement the chess board functions so they could be used by the main module.
+El Koumy
+31/12/2019
 '''
 
 
@@ -54,3 +56,5 @@ def look_for(board,piece):
                 y = row
                 list_of_locations.append((x,y))
     return list_of_locations
+
+
