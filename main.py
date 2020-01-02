@@ -16,6 +16,19 @@ import threading #To allow for AI to think simultaneously while the GUI is color
 import os #To allow path joining with cross-platform support
 
 
+# make_move()
+# import make_move from Gamal's code
+from modules.chess_processing import make_move as makemove
+
+#pos_to_key()
+# import pos_to_key from Gamal's code
+from modules.chess_processing import pos_to_key as pos2key
+
+# is_check_mate()
+# import isCheckmate from Gamal's code
+from modules.chess_processing import is_check_mate as isCheckmate
+
+
 #########MAIN FUNCTION####################################################
 #Initialize the board:
 board = [ ['Rb', 'Nb', 'Bb', 'Qb', 'Kb', 'Bb', 'Nb', 'Rb'], #8
