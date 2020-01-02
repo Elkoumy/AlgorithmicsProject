@@ -4,50 +4,7 @@ Kamel
 2/1/2020
 '''
 
-##//////////////////////////////////////AI RELATED FUNCTIONS////////////////////////////////
-#
-# negamax(position,depth,alpha,beta,colorsign,bestMoveReturn,root=True) - This
-# function takes as its inputs a position, and a depth to which moves should be
-# analysed. It will generate moves and analyse resulting positions to decide the
-# best move to be played for the AI. Alpha and beta are lower and upper bounds to
-# a position's possible
-
-# score values and allows for alpha-beta pruning. Colorsign indicates the player
-# to move. bestMoveReturn is a list that will be assigned the move to be played.
-# Returning is not possible in this case because threading is used. root is a
-# variable that keeps track of whether the original node is processing now or a
-# lower node.
-#Alpha beta pruning is not explained in detail here so I recommend
-# learning more about it if the code does not make sense.
-# Note that the function does not always traverse a tree to give back the move
-# to be played by the AI. It also checks the opening table to see if there is a
-# prerecorded move that it can play without searching. Scoring of each position
-# is also stored in a global dictionary to allow for time-saving if the same
-# position occurs elsewhere in the tree. The code used here is adapted from the
-# pseudocode provided at Wikipidea:
-# https://en.wikipedia.org/wiki/Negamax#Negamax_with_alpha_beta_pruning
-#
-# evaluate(position) - This function takes as input a position to be analysed.
-# It will look at the positioning of pieces on the board to judge whether white
-# has an advantage or black. If it returns zero, it means it considers the
-# position to be equal for both sides. A positive value is an advantage to the
-# white side and a negative value is an advantage to the black side.
-#
-# pieceSquareTable(flatboard,gamephase) - Gives a position a score based solely
-# on tables that define points for each position for each piece type.
-#
-# doubledPawns(board,color) - This function counts the number of doubled pawns
-# for a player and returns it. Doubled pawns are those that are on the same file.
-#
-# blockedPawns(board,color) - This function counts the number of blocked pawns
-# for a player and returns it. Blocked pawns are those that have a piece in front
-# of them and so cannot advance forward.
-#
-# isolatedPawns(board,color) - This function counts the number of isolated pawns
-# for a player. These are pawns that do not have supporting pawns on adjacent files
-# and so are difficult to protect.
-#
-#
+import classes
 
 # all_moves()
 # import all_moves from Gamal's code

@@ -1,3 +1,5 @@
+
+
 #########MAIN FUNCTION####################################################
 #Initialize the board:
 board = [ ['Rb', 'Nb', 'Bb', 'Qb', 'Kb', 'Bb', 'Nb', 'Rb'], #8

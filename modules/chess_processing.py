@@ -4,6 +4,9 @@ El Koumy
 31/12/2019
 '''
 
+import classes
+
+
 
 def is_occupied(board, x, y):
     '''
