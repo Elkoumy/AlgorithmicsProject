@@ -2,8 +2,18 @@ from classes import *
 from modules import *
 
 
+#from classes import GamePosition
 
-
+#Import dependencies:
+import pygame #Game library
+from pygame.locals import * #For useful variables
+import copy #Library used to make exact copies of lists.
+import pickle #Library used to store dictionaries in a text file and read them from text files.
+import random #Used for making random selections
+from collections import defaultdict #Used for giving dictionary values default data types.
+from collections import Counter #For counting elements in a list effieciently.
+import threading #To allow for AI to think simultaneously while the GUI is coloring the board.
+import os #To allow path joining with cross-platform support
 
 
 #########MAIN FUNCTION####################################################
@@ -28,8 +38,7 @@ En_Passant_Target = -1 #This variable will store a coordinate if there is a squa
                        #targets.
 half_move_clock = 0 #This variable stores the number of reversible moves that have been played so far.
 #Generate an instance of GamePosition class to store the above data:
-position = GamePosition(board,player,castling_rights,En_Passant_Target
-                        ,half_move_clock)
+position = GamePosition(board,player,castling_rights,En_Passant_Target, half_move_clock)
 #Store the piece square tables here so they can be accessed globally by pieceSquareTable() function:
 pawn_table = [  0,  0,  0,  0,  0,  0,  0,  0,
 50, 50, 50, 50, 50, 50, 50, 50,
@@ -96,7 +105,7 @@ screen = pygame.display.set_mode((600,600))
 
 #Load all the images:
 #Load the background chess board image:
-background = pygame.image.load(os.path.join('Media', 'board.png')).convert()
+background = pygame.image.load(os.path.join('Media', 'board.jpg')).convert()
 #Load an image with all the pieces on it:
 pieces_image = pygame.image.load(os.path.join('Media', 'Chess_Pieces_Sprite.png')).convert_alpha()
 circle_image_green = pygame.image.load(os.path.join('Media', 'green_circle_small.png')).convert_alpha()

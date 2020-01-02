@@ -1,4 +1,4 @@
 # __init__.py
-from . import GamePosition
-from . import Piece
-from . import Shades
+from .GamePosition import GamePosition
+from .Piece import Piece
+from .Shades import Shades
