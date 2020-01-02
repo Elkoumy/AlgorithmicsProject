@@ -5,22 +5,24 @@ Kamel
 '''
 
 import classes
+#from modules import chess_processing
+
 
 # all_moves()
 # import all_moves from Gamal's code
-from chess_processing import all_moves as allMoves
+from modules.chess_processing import all_moves as allMoves
 
 # make_move()
 # import make_move from Gamal's code
-from chess_processing import make_move as makemove
+from modules.chess_processing import make_move as makemove
 
 #pos_to_key()
 # import pos_to_key from Gamal's code
-from chess_processing import pos_to_key as pos2key
+from modules.chess_processing import pos_to_key as pos2key
 
 # is_check_mate()
 # import isCheckmate from Gamal's code
-from chess_processing import is_check_mate as isCheckmate
+from modules.chess_processing import is_check_mate as isCheckmate
 
 
 ###########################////////AI RELATED FUNCTIONS\\\\\\\\\\############################

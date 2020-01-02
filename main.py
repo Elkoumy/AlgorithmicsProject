@@ -1,4 +1,5 @@
-
+from classes import GamePosition, Shades, Piece
+from modules import chess_ai, chess_processing, GUI
 
 #########MAIN FUNCTION####################################################
 #Initialize the board:
