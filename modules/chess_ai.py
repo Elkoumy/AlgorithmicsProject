@@ -4,7 +4,7 @@ Kamel
 2/1/2020
 '''
 
-import classes
+from classes import *
 #from modules import chess_processing
 
 

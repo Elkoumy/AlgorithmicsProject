@@ -2,10 +2,11 @@
 In this file, we are going to implement the chess board functions so they could be used by the main module.
 El Koumy
 31/12/2019
+
 '''
 
-import classes
-
+from classes import GamePosition, Shades, Piece
+from modules import chess_ai,  GUI
 
 
 def is_occupied(board, x, y):
