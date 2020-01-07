@@ -1,9 +1,9 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
 
 @author: nesma
 """
+
 ##############################////////GUI FUNCTIONS\\\\\\\\\\\\\#############################
 def chess_coord_to_pixels(chess_coord):
     x,y = chess_coord
@@ -54,7 +54,7 @@ def createPieces(board):
         for k in range(8):
             if board[i][k]!=0:
                 #The square is not empty, create a piece object:
-                p = Piece(board[i][k],(k,i))
+                p = Piece(board[i][k],(k,i),square_width,square_height)
                 #Append the reference to the object to the appropriate
                 #list:
                 if board[i][k][1]=='w':

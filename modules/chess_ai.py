@@ -10,19 +10,19 @@ from classes import *
 
 # all_moves()
 # import all_moves from Gamal's code
-from modules.chess_processing import all_moves as allMoves
+#from modules.chess_processing import all_moves as allMoves
 
 # make_move()
 # import make_move from Gamal's code
-from modules.chess_processing import make_move as makemove
+#from modules.chess_processing import make_move as makemove
 
 #pos_to_key()
 # import pos_to_key from Gamal's code
-from modules.chess_processing import pos_to_key as pos2key
+#from modules.chess_processing import pos_to_key as pos2key
 
 # is_check_mate()
 # import isCheckmate from Gamal's code
-from modules.chess_processing import is_check_mate as isCheckmate
+#from modules.chess_processing import is_check_mate as isCheckmate
 
 
 ###########################////////AI RELATED FUNCTIONS\\\\\\\\\\############################
@@ -48,7 +48,7 @@ def negamax(position,depth,alpha,beta,colorsign,bestMoveReturn,root=True):
     #
     if root:
         #Generate key from current position:
-        key = pos2key(position)
+        key = pos_to_key(position)
         if key in openings:
             #Return the best move to be played:
             bestMoveReturn[:] = random.choice(openings[key])
@@ -62,7 +62,7 @@ def negamax(position,depth,alpha,beta,colorsign,bestMoveReturn,root=True):
         return colorsign*evaluate(position)
 
     #Generate all the moves that can be played:
-    moves = allMoves(position, colorsign)
+    moves = all_moves(position, colorsign)
 
     #If there are no moves to be played, just evaluate the position and return it:
     if moves==[]:
@@ -79,9 +79,9 @@ def negamax(position,depth,alpha,beta,colorsign,bestMoveReturn,root=True):
     for move in moves:
         #Make a clone of the current move and perform the move on it:
         newpos = position.clone()
-        makemove(newpos,move[0][0],move[0][1],move[1][0],move[1][1])
+        make_move(newpos,move[0][0],move[0][1],move[1][0],move[1][1])
         #Generate the key for the new resulting position:
-        key = pos2key(newpos)
+        key = pos_to_key(newpos)
         #If this position was already searched before, retrieve its node value.
         #Otherwise, calculate its node value and store it in the dictionary:
         if key in searched:
@@ -128,10 +128,10 @@ def evaluate(position):
     '''
 
 
-    if isCheckmate(position,'white'):
+    if is_check_mate(position,'white'):
         #Major advantage to black
         return -20000
-    if isCheckmate(position,'black'):
+    if is_check_mate(position,'black'):
         #Major advantage to white
         return 20000
 
