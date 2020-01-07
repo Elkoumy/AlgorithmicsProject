@@ -2,7 +2,10 @@
 # features that specify the state of the game, such as the the player that has to play next,
 # castling rights of the players, number of irreversible moves played so far, the positions of
 # pieces on the board, etc.
-
+import copy
+#from modules.chess_processing import pos_to_key
+#from modules import chess_processing
+#from modules import *
 class GamePosition:
     def __init__(self,board,player,castling_rights,EnP_Target,HMC,history = {}):
         self.board = board #A 2D array containing information about piece postitions. Check main
@@ -17,7 +20,6 @@ class GamePosition:
         self.history = history #A dictionary that stores as key a position (hashed) and the value of each of
         #these keys represents the number of times each of these positions was repeated in order for this
         #position to be reached.
-
     def getboard(self):
         return self.board
     def setboard(self,board):
@@ -45,7 +47,7 @@ class GamePosition:
         return any(value>=3 for value in self.history.values())
     def addtoHistory(self,position):
         #Generate a unique key out of the current position:
-        key = pos2key(position)
+        key = pos_to_key(position)
         #Add it to the history dictionary.
         self.history[key] = self.history.get(key,0) + 1
     def gethistory(self):
