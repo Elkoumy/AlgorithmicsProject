@@ -3,9 +3,11 @@
 # displayed on thee chess board.
 
 class Piece:
-    def __init__(self,pieceinfo,chess_coord):
+    def __init__(self,pieceinfo,chess_coord,square_width,square_height):
         #pieceinfo is a string such as 'Qb'. The Q represents Queen and b
         #shows the fact that it is black:
+        self.square_width = square_width
+        self.square_height = square_height
         piece = pieceinfo[0]
         color = pieceinfo[1]
         #Get the information about where the image for this piece is stored
@@ -24,16 +26,16 @@ class Piece:
             index = 4
         elif piece == 'P':
             index = 5
-        left_x = square_width*index
+        left_x = self.square_width*index
         if color == 'w':
             left_y = 0
         else:
-            left_y = square_height
+            left_y = self.square_height
 
         self.pieceinfo = pieceinfo
         #subsection defines the part of the sprite image that represents our
         #piece:
-        self.subsection = (left_x,left_y,square_width,square_height)
+        self.subsection = (left_x,left_y,self.square_width,self.square_height)
         #There are two ways that the position of a piece is defined on the
         #board. The default one used is the chess_coord, which stores something
         #like (3,2). It represents the chess coordinate where our piece image should
@@ -55,4 +57,4 @@ class Piece:
         self.chess_coord = coord
     def __repr__(self):
         #useful for debugging
-        return self.pieceinfo+'('+str(chess_coord[0])+','+str(chess_coord[1])+')'
+        return self.pieceinfo+'('+str(self.chess_coord[0])+','+str(self.chess_coord[1])+')'
