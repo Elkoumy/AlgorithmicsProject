@@ -9,8 +9,6 @@ from modules.chess_ai import  *
 from collections import defaultdict
 from collections import Counter
 
-
-
 pawn_table = [  0,  0,  0,  0,  0,  0,  0,  0,
 50, 50, 50, 50, 50, 50, 50, 50,
 10, 10, 20, 30, 30, 20, 10, 10,
