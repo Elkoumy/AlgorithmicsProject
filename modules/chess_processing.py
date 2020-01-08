@@ -13,8 +13,7 @@ def is_occupied(board, x, y):
     '''
     Returns true if a given coordinate on the board is not empty, and false otherwise.
     '''
-    #print(f"board[y][x]: {board[y][x]}")
-    if board[int(y)][int(x)] == 0:
+    if board[y][x] == 0:
         return False
     return True
 
@@ -223,7 +222,7 @@ def make_move(position, x, y, x2, y2):
         half_move_clock += 1
 
     # Make the move:
-    board[int(y2)][int(x2)] = board[y][x]
+    board[y2][x2] = board[y][x]
     board[y][x] = 0
 
     # Special piece requirements:
@@ -265,7 +264,7 @@ def make_move(position, x, y, x2, y2):
         # If an en passant kill was made, the target enemy must die:
         if EnP_Target == (x2, y2):
             if color == 'w':
-                board[int(y2 + 1)][int(x2)] = 0
+                board[y2 + 1][x2] = 0
             else:
                 board[y2 - 1][x2] = 0
         # If a pawn moved two steps, there is a potential en passant

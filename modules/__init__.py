@@ -2,3 +2,4 @@
 from . import chess_ai
 from . import chess_processing
 from . import GUI
+from . import evaluation
