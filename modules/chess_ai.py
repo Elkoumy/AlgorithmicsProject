@@ -5,25 +5,84 @@ Kamel
 '''
 
 from classes import *
+from collections import Counter #For counting elements in a list effieciently.
+
 #from modules import chess_processing
 
 
 # all_moves()
-# import all_moves from Gamal's code
-#from modules.chess_processing import all_moves as allMoves
+#import all_moves from Gamal's code
+from modules.chess_processing import all_moves
 
 # make_move()
 # import make_move from Gamal's code
-#from modules.chess_processing import make_move as makemove
+from modules.chess_processing import make_move
+from modules.chess_processing import *
 
 #pos_to_key()
-# import pos_to_key from Gamal's code
-#from modules.chess_processing import pos_to_key as pos2key
+#import pos_to_key from Gamal's code
+from modules.chess_processing import pos_to_key
+from collections import defaultdict #Used for giving dictionary values default data types.
 
 # is_check_mate()
 # import isCheckmate from Gamal's code
 #from modules.chess_processing import is_check_mate as isCheckmate
-
+pawn_table = [  0,  0,  0,  0,  0,  0,  0,  0,
+50, 50, 50, 50, 50, 50, 50, 50,
+10, 10, 20, 30, 30, 20, 10, 10,
+ 5,  5, 10, 25, 25, 10,  5,  5,
+ 0,  0,  0, 20, 20,  0,  0,  0,
+ 5, -5,-10,  0,  0,-10, -5,  5,
+ 5, 10, 10,-20,-20, 10, 10,  5,
+ 0,  0,  0,  0,  0,  0,  0,  0]
+knight_table = [-50,-40,-30,-30,-30,-30,-40,-50,
+-40,-20,  0,  0,  0,  0,-20,-40,
+-30,  0, 10, 15, 15, 10,  0,-30,
+-30,  5, 15, 20, 20, 15,  5,-30,
+-30,  0, 15, 20, 20, 15,  0,-30,
+-30,  5, 10, 15, 15, 10,  5,-30,
+-40,-20,  0,  5,  5,  0,-20,-40,
+-50,-90,-30,-30,-30,-30,-90,-50]
+bishop_table = [-20,-10,-10,-10,-10,-10,-10,-20,
+-10,  0,  0,  0,  0,  0,  0,-10,
+-10,  0,  5, 10, 10,  5,  0,-10,
+-10,  5,  5, 10, 10,  5,  5,-10,
+-10,  0, 10, 10, 10, 10,  0,-10,
+-10, 10, 10, 10, 10, 10, 10,-10,
+-10,  5,  0,  0,  0,  0,  5,-10,
+-20,-10,-90,-10,-10,-90,-10,-20]
+rook_table = [0,  0,  0,  0,  0,  0,  0,  0,
+  5, 10, 10, 10, 10, 10, 10,  5,
+ -5,  0,  0,  0,  0,  0,  0, -5,
+ -5,  0,  0,  0,  0,  0,  0, -5,
+ -5,  0,  0,  0,  0,  0,  0, -5,
+ -5,  0,  0,  0,  0,  0,  0, -5,
+ -5,  0,  0,  0,  0,  0,  0, -5,
+  0,  0,  0,  5,  5,  0,  0,  0]
+queen_table = [-20,-10,-10, -5, -5,-10,-10,-20,
+-10,  0,  0,  0,  0,  0,  0,-10,
+-10,  0,  5,  5,  5,  5,  0,-10,
+ -5,  0,  5,  5,  5,  5,  0, -5,
+  0,  0,  5,  5,  5,  5,  0, -5,
+-10,  5,  5,  5,  5,  5,  0,-10,
+-10,  0,  5,  0,  0,  0,  0,-10,
+-20,-10,-10, 70, -5,-10,-10,-20]
+king_table = [-30,-40,-40,-50,-50,-40,-40,-30,
+-30,-40,-40,-50,-50,-40,-40,-30,
+-30,-40,-40,-50,-50,-40,-40,-30,
+-30,-40,-40,-50,-50,-40,-40,-30,
+-20,-30,-30,-40,-40,-30,-30,-20,
+-10,-20,-20,-20,-20,-20,-20,-10,
+ 20, 20,  0,  0,  0,  0, 20, 20,
+ 20, 30, 10,  0,  0, 10, 30, 20]
+king_endgame_table = [-50,-40,-30,-20,-20,-30,-40,-50,
+-30,-20,-10,  0,  0,-10,-20,-30,
+-30,-10, 20, 30, 30, 20,-10,-30,
+-30,-10, 30, 40, 40, 30,-10,-30,
+-30,-10, 30, 40, 40, 30,-10,-30,
+-30,-10, 20, 30, 30, 20,-10,-30,
+-30,-30,  0,  0,  0,  0,-30,-30,
+-50,-30,-30,-30,-30,-30,-30,-50]
 
 ###########################////////AI RELATED FUNCTIONS\\\\\\\\\\############################
 
@@ -45,7 +104,7 @@ def negamax(position,depth,alpha,beta,colorsign,bestMoveReturn,root=True):
     # position occurs elsewhere in the tree.
 
     # First check if the position is already stored in the opening database dictionary:
-    #
+    openings = defaultdict(list)
     if root:
         #Generate key from current position:
         key = pos_to_key(position)
@@ -56,6 +115,8 @@ def negamax(position,depth,alpha,beta,colorsign,bestMoveReturn,root=True):
 
     # Access global variable that will store scores of positions already evaluated:
     global searched
+    searched = {}
+
 
     #If the depth is zero, we are at a leaf node (no more depth to be analysed):
     if depth==0:
@@ -270,7 +331,7 @@ def doubledPawns(board,color):
 
     color = color[0]
     #Get indices of pawns:
-    listofpawns = lookfor(board,'P'+color)
+    listofpawns = look_for(board,'P'+color)
     #Count the number of doubled pawns by counting occurences of
     #repeats in their x-coordinates:
     repeats = 0
@@ -296,13 +357,13 @@ def blockedPawns(board,color):
     '''
 
     color = color[0]
-    listofpawns = lookfor(board,'P'+color)
+    listofpawns = look_for(board,'P'+color)
     blocked = 0
     #Self explanatory:
     for pawnpos in listofpawns:
-        if ((color=='w' and isOccupiedby(board,pawnpos[0],pawnpos[1]-1,
+        if ((color=='w' and is_occupied_by(board,pawnpos[0],pawnpos[1]-1,
                                        'black'))
-            or (color=='b' and isOccupiedby(board,pawnpos[0],pawnpos[1]+1,
+            or (color=='b' and is_occupied_by(board,pawnpos[0],pawnpos[1]+1,
                                        'white'))):
             blocked = blocked + 1
     return blocked
@@ -322,7 +383,7 @@ def isolatedPawns(board,color):
     '''
 
     color = color[0]
-    listofpawns = lookfor(board,'P'+color)
+    listofpawns = look_for(board,'P'+color)
     #Get x coordinates of all the pawns:
     xlist = [x for (x,y) in listofpawns]
     isolated = 0

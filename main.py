@@ -29,8 +29,8 @@ import os #To allow path joining with cross-platform support
 #from modules.chess_processing import pos_to_key as pos2key
 
 # is_check_mate()
-# import isCheckmate from Gamal's code
-#from modules.chess_processing import is_check_mate as isCheckmate
+# import is_check_mate from Gamal's code
+#from modules.chess_processing import is_check_mate as is_check_mate
 
 from modules.chess_processing import *
 from modules.chess_ai import *
@@ -435,6 +435,7 @@ while not gameEnded:
             isMenu = False
             #In case the player chose to play against the AI and decided to
             #play as black, call upon the AI to make a move:
+            #if isAI and AIPlayer==0:
             if isAI and AIPlayer==0:
                 colorsign=1
                 bestMoveReturn = []
@@ -700,13 +701,13 @@ while not gameEnded:
             player = position.getplayer()
             HMC = position.getHMC()
             position.addtoHistory(position)
-            if HMC>=100 or isStalemate(position) or position.checkRepition():
+            if HMC>=100 or is_stalemate(position) or position.checkRepition():
                 isDraw = True
                 chessEnded = True
-            if isCheckmate(position,'white'):
+            if is_check_mate(position,'white'):
                 winner = 'b'
                 chessEnded = True
-            if isCheckmate(position,'black'):
+            if is_check_mate(position,'black'):
                 winner = 'w'
                 chessEnded = True
             #Animate the movement:
