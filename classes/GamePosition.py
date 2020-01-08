@@ -3,6 +3,11 @@
 # castling rights of the players, number of irreversible moves played so far, the positions of
 # pieces on the board, etc.
 import copy
+
+
+#pos_to_key()
+# import pos_to_key from Gamal's code
+from modules.chess_processing import pos_to_key
 #from modules.chess_processing import pos_to_key
 #from modules import chess_processing
 #from modules import *

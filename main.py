@@ -1,7 +1,11 @@
 from classes import *
-from modules import chess_ai, chess_processing
+from modules import chess_ai, chess_processing, GUI
 
 
+
+from classes.GamePosition import GamePosition
+from classes.Piece import Piece
+from classes.Shades import Shades
 #from classes import GamePosition
 
 #Import dependencies:
@@ -40,7 +44,7 @@ def chess_coord_to_pixels(chess_coord):
     #There are two sets of coordinates that this function could choose to return.
     #One is the coordinates that would be usually returned, the other is one that
     #would be returned if the board were to be flipped.
-    #Note that square width and height variables are defined in the main function and 
+    #Note that square width and height variables are defined in the main function and
     #so are accessible here as global variables.
     if isAI:
         if AIPlayer==0:
@@ -50,7 +54,7 @@ def chess_coord_to_pixels(chess_coord):
             return (x*square_width, y*square_height)
 #    #Being here means two player game is being played.
 #    #If the flipping mode is enabled, and the player to play is black,
-#    #the board should flip, but not until the transition animation for 
+#    #the board should flip, but not until the transition animation for
 #    #white movement is complete:
 #    if not isFlip or player==0 ^ isTransition:
 #        return (x*square_width, y*square_height)
@@ -84,7 +88,7 @@ def createPieces(board):
         for k in range(8):
             if board[i][k]!=0:
                 #The square is not empty, create a piece object:
-                p = Piece(board[i][k],(k,i),square_width,square_height)
+                p = Piece.Piece(board[i][k],(k,i),square_width,square_height)
                 #Append the reference to the object to the appropriate
                 #list:
                 if board[i][k][1]=='w':
@@ -104,28 +108,28 @@ def createShades(listofTuples):
         #The game ended with a draw. Make yellow circle shades for
         #both the kings to show this is the case:
         coord = look_for(board,'Kw')[0]
-        shade = Shades(circle_image_yellow,coord)
+        shade = Shades.Shades(circle_image_yellow,coord)
         listofShades.append(shade)
         coord = look_for(board,'Kb')[0]
-        shade = Shades(circle_image_yellow,coord)
+        shade = Shades.Shades(circle_image_yellow,coord)
         listofShades.append(shade)
         #There is no need to go further:
         return
     if chessEnded:
-        #The game has ended, with a checkmate because it cannot be a 
+        #The game has ended, with a checkmate because it cannot be a
         #draw if the code reached here.
         #Give the winning king a green circle shade:
         coord = look_for(board,'K'+winner)[0]
-        shade = Shades(circle_image_green_big,coord)
+        shade = Shades.Shades(circle_image_green_big,coord)
         listofShades.append(shade)
     #If either king is under attack, give them a red circle:
     if is_check(position,'white'):
         coord = look_for(board,'Kw')[0]
-        shade = Shades(circle_image_red,coord)
+        shade = Shades.Shades(circle_image_red,coord)
         listofShades.append(shade)
     if is_check(position,'black'):
         coord = look_for(board,'Kb')[0]
-        shade = Shades(circle_image_red,coord)
+        shade = Shades.Shades(circle_image_red,coord)
         listofShades.append(shade)
     #Go through all the target squares inputted:
     for pos in listofTuples:
@@ -136,7 +140,7 @@ def createShades(listofTuples):
             img = circle_image_capture
         else:
             img = circle_image_green
-        shade = Shades(img,pos)
+        shade = Shades.Shades(img,pos)
         #Append:
         listofShades.append(shade)
 def drawBoard():
@@ -175,7 +179,7 @@ def drawBoard():
 
     #Potentially captured pieces:
     for piece in order[0]:
-        
+
         chess_coord,subsection,pos = piece.getInfo()
         pixel_coord = chess_coord_to_pixels(chess_coord)
         if pos==(-1,-1):
@@ -225,7 +229,7 @@ En_Passant_Target = -1 #This variable will store a coordinate if there is a squa
                        #targets.
 half_move_clock = 0 #This variable stores the number of reversible moves that have been played so far.
 #Generate an instance of GamePosition class to store the above data:
-position = GamePosition(board,player,castling_rights,En_Passant_Target, half_move_clock)
+position = GamePosition.GamePosition(board,player,castling_rights,En_Passant_Target, half_move_clock)
 #Store the piece square tables here so they can be accessed globally by pieceSquareTable() function:
 pawn_table = [  0,  0,  0,  0,  0,  0,  0,  0,
 50, 50, 50, 50, 50, 50, 50, 50,
@@ -498,9 +502,9 @@ while not gameEnded:
             createShades([])
         #If the AI is white, start from the opposite side (since the board is flipped)
         if AIPlayer==0:
-            listofShades.append(Shades(greenbox_image,(7-ax,7-ay)))
+            listofShades.append(Shades.Shades(greenbox_image,(7-ax,7-ay)))
         else:
-            listofShades.append(Shades(greenbox_image,(ax,ay)))
+            listofShades.append(Shades.Shades(greenbox_image,(ax,ay)))
 
     for event in pygame.event.get():
         #Deal with all the user inputs:
@@ -545,7 +549,7 @@ while not gameEnded:
                 (is_check(position,'white') or is_check(position,'black'))):
                 None
             else:
-                listofShades.append(Shades(greenbox_image,(x,y)))
+                listofShades.append(Shades.Shades(greenbox_image,(x,y)))
             #A piece is being dragged:
             isDown = True
         if (isDown or isClicked) and event.type == MOUSEBUTTONUP:
@@ -685,7 +689,11 @@ while not gameEnded:
             #Destroy any shades:
             createShades([])
             #Get the move proposed:
-            [x,y],[x2,y2] = bestMoveReturn
+            #[x,y],[x2,y2] = bestMoveReturn
+            print(f"BestMoveReturn: {bestMoveReturn}")
+            p1, p2 = bestMoveReturn
+            x,y = p1
+            x2,y2 = p2
             #Do everything just as if the user made a move by click-click movement:
             make_move(position,x,y,x2,y2)
             prevMove = [x,y,x2,y2]
