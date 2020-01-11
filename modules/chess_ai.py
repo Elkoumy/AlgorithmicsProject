@@ -27,6 +27,8 @@ from modules.evaluation import *
 # is_check_mate()
 # import isCheckmate from Gamal's code
 #from modules.chess_processing import is_check_mate as isCheckmate
+import time
+MaxAllowedTimeInSeconds = 30
 
 def negamax(position,depth,alpha,beta,colorsign,bestMoveReturn,root=True):
     ''' generate moves, decide the best move, and use openning table to reduce time.
@@ -46,6 +48,8 @@ def negamax(position,depth,alpha,beta,colorsign,bestMoveReturn,root=True):
     # position occurs elsewhere in the tree.
 
     # First check if the position is already stored in the opening database dictionary:
+    startTime = time.time()
+
     openings = defaultdict(list)
     if root:
         #Generate key from current position:
@@ -89,6 +93,10 @@ def negamax(position,depth,alpha,beta,colorsign,bestMoveReturn,root=True):
         #Otherwise, calculate its node value and store it in the dictionary:
         if key in searched:
             value = searched[key]
+            print("Exist")
+        elif time.time() - startTime > MaxAllowedTimeInSeconds: 
+            print("Time Limit")
+            break
         else:
             value = -negamax(newpos,depth-1, -beta,-alpha,-colorsign,[],False)
             searched[key] = value

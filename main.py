@@ -440,7 +440,7 @@ while not gameEnded:
                 colorsign=1
                 bestMoveReturn = []
                 move_thread = threading.Thread(target = negamax,
-                            args = (position,3,-1000000,1000000,colorsign,bestMoveReturn))
+                            args = (position,6,-1000000,1000000,colorsign,bestMoveReturn))
                 move_thread.start()
                 isAIThink = True
             continue
