@@ -139,10 +139,13 @@ def evaluate(position):
     Sb = blockedPawns(board,'black')
     Iw = isolatedPawns(board,'white')
     Ib = isolatedPawns(board,'black')
+    Adv_pawn_w =advanced_pawns(board,'white')
+    Adv_pawn_b = advanced_pawns(board, 'black')
+
     #Evaluate position based on above data:
     evaluation1 = 900*(Qw - Qb) + 500*(Rw - Rb) +330*(Bw-Bb
                 )+320*(Nw - Nb) +100*(Pw - Pb) +-30*(Dw-Db + Sw-Sb + Iw- Ib
-                )
+                )+300*(Adv_pawn_w-Adv_pawn_b)
     #Evaluate position based on piece square tables:
     evaluation2 = pieceSquareTable(flatboard,gamephase)
     #Sum the evaluations:
@@ -292,3 +295,25 @@ def isolatedPawns(board,color):
             #Right edge:
             isolated+=1
     return isolated
+
+def advanced_pawns(board,color):
+    # pawns closer to promotion are much better
+    advanced_pawn_mul = 40
+
+    # pawns that are promotable are *very* good
+    promotable_bonus = 350
+    #from Phantom.constants import grid_width
+    score = 0
+    listofpawns = look_for(board, 'P' + color)
+    for piece in listofpawns:
+        if piece.color == 'white':
+            if piece.y >= 4:
+                score += piece.y * advanced_pawn_mul
+            if piece.is_promotable:
+                score += promotable_bonus
+        elif piece.color == 'black':
+            if piece.y <= 3:
+                score -= (8 - piece.y) * advanced_pawn_mul
+            if piece.is_promotable:
+                score -= promotable_bonus
+    return score
