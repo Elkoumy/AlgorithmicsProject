@@ -292,7 +292,7 @@ king_endgame_table = [-50,-40,-30,-20,-20,-30,-40,-50,
 #Start pygame
 pygame.init()
 #Load the screen with any arbitrary size for now:
-screen = pygame.display.set_mode((600,600))
+screen = pygame.display.set_mode((900,900))
 
 #Load all the images:
 #Load the background chess board image:

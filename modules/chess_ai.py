@@ -73,7 +73,7 @@ def negamax(curr_position,depth,alpha,beta,colorsign,bestMoveReturn,root=True):
 
     for move in possible_moves: #Go through each move:
         newpos = curr_position.clone() #Make a clone of the current move and perform the move on it:
-        make_move(newpos,move[0][0],move[0][1],move[1][0],move[1][1])
+        make_move(newpos,move[0][0],move[0][1],int(move[1][0]),int(move[1][1]))
         dict_key = pos_to_key(newpos)  #Generate the dict_key for the new resulting curr_position:
 
         if dict_key in searched:  #If this curr_position was already searched before, retrieve its node dict_value, Otherwise, calculate its node dict_value and store it in the dictionary:
