@@ -494,8 +494,8 @@ def find_possible_squares(position, x, y, attack_search=False):
     if not attack_search:
         new_list = []
         for tupleq in list_of_tuples:
-            x2 = tupleq[0]
-            y2 = tupleq[1]
+            x2 = int(tupleq[0])
+            y2 =int( tupleq[1])
             temp_pos = position.clone()
             make_move(temp_pos, x, y, x2, y2)
             if not is_check(temp_pos, color):
