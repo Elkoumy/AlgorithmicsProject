@@ -79,7 +79,7 @@ def createShades(listofTuples):
     global list_of_shades
     #Empty the list
     list_of_shades = []
-    if isTransition:
+    if is_transition:
         #Nothing should be shaded when a piece is being animated:
         return
     if is_draw:
@@ -132,7 +132,7 @@ def drawchess_board():
         order = [list_of_white_pieces,list_of_black_pieces]
     else:
         order = [list_of_black_pieces,list_of_white_pieces]
-    if isTransition:
+    if is_transition:
         #If a piece is being animated, the player info is changed despite
         #white still capturing over black, for example. Reverse the order:
         order = list(reversed(order))
@@ -145,7 +145,7 @@ def drawchess_board():
             pixel_coord = chess_coord_to_pixels(chess_coord)
             screen.blit(img,pixel_coord)
     #Make shades to show what the previous move played was:
-    if prevMove[0]!=-1 and not isTransition:
+    if prevMove[0]!=-1 and not is_transition:
         x,y,x2,y2 = prevMove
         screen.blit(yellowbox_image,chess_coord_to_pixels((x,y)))
         screen.blit(yellowbox_image,chess_coord_to_pixels((x2,y2)))
@@ -330,12 +330,12 @@ list_of_white_pieces,list_of_black_pieces = create_pieces(chess_board)
 
 list_of_shades = []
 
-clock = pygame.time.Clock() #Helps controlling fps of the game.
-isDown = False #Variable that shows if the mouse is being held down
+clock = pygame.time.Clock()
+is_down = False #Variable that shows if the mouse is being held down
                #onto a piece
-isClicked = False #To keep track of whether a piece was clicked in order
+is_clicked = False #To keep track of whether a piece was clicked in order
 #to indicate intention to move by the user.
-isTransition = False #Keeps track of whether or not a piece is being animated.
+is_transition = False #Keeps track of whether or not a piece is being animated.
 is_draw = False #Will store True if the game ended with a draw
 chessEnded = False #Will become True once the chess game ends by checkmate, stalemate, etc.
 isRecord = False #Set this to True if you want to record moves to the Opening Book. Do not
@@ -362,41 +362,41 @@ prevMove = [-1,-1,-1,-1] #Also a global varible that stores the last move played
 ax,ay=0,0
 numm = 0
 #For showing the menu and keeping track of user choices:
-isMenu = True
+is_menu = True
 is_ai = True
-isFlip = -1
+is_flip = -1
 ai_player = -1
 #Finally, a variable to keep false until the user wants to quit:
-gameEnded = False
+game_ended = False
 #########################INFINITE LOOP#####################################
 #The program remains in this loop until the user quits the application
-while not gameEnded:
+while not game_ended:
 
-    if isMenu:
+    if is_menu:
         #Menu needs to be shown right now.
         #Blit the background:
         screen.blit(background,(0,0))
         if is_ai==True:
             screen.blit(playwhite_pic,(square_width*2,square_height*2))
-        if isFlip!=-1:
+        if is_flip!=-1:
             drawchess_board()
-            isMenu = False
+            is_menu = False
             if is_ai and ai_player==0:
                 colorsign=1
-                bestMoveReturn = []
+                best_move_return = []
                 move_thread = threading.Thread(target = negamax,
-                            args = (position,6,-1000000,1000000,colorsign,bestMoveReturn))
+                            args = (position,6,-1000000,1000000,colorsign,best_move_return))
                 move_thread.start()
                 is_aiThink = True
             continue
         for event in pygame.event.get():
             if event.type==QUIT:
-                gameEnded = True
+                game_ended = True
                 break
             if event.type == MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 ai_player = 1
-                isFlip = False
+                is_flip = False
                 is_ai = True
         pygame.display.update()
 #        clock.tick(60)
@@ -427,15 +427,15 @@ while not gameEnded:
 
         if event.type==QUIT:
             #Window was closed.
-            gameEnded = True
+            game_ended = True
 
             break
         #Under the following conditions, user input should be
         #completely ignored:
-        if chessEnded or isTransition or is_aiThink:
+        if chessEnded or is_transition or is_aiThink:
             continue
-        #isDown means a piece is being dragged.
-        if not isDown and event.type == MOUSEBUTTONDOWN:
+        #is_down means a piece is being dragged.
+        if not is_down and event.type == MOUSEBUTTONDOWN:
             #Mouse was pressed down.
             #Get the oordinates of the mouse
             pos = pygame.mouse.get_pos()
@@ -468,10 +468,10 @@ while not gameEnded:
             else:
                 list_of_shades.append(Shades.Shades(greenbox_image,(x,y)))
             #A piece is being dragged:
-            isDown = True
-        if (isDown or isClicked) and event.type == MOUSEBUTTONUP:
+            is_down = True
+        if (is_down or is_clicked) and event.type == MOUSEBUTTONUP:
             #Mouse was released.
-            isDown = False
+            is_down = False
             #Snap the piece back to its coordinate position
             dragPiece.setpos((-1,-1))
             #Get coordinates and convert them:
@@ -481,19 +481,19 @@ while not gameEnded:
             x2 = chess_coord[0]
             y2 = chess_coord[1]
             #Initialize:
-            isTransition = False
+            is_transition = False
             if (x,y)==(x2,y2): #NO dragging occured
                 #(ie the mouse was held and released on the same square)
-                if not isClicked: #nothing had been clicked previously
+                if not is_clicked: #nothing had been clicked previously
                     #This is the first click
-                    isClicked = True
+                    is_clicked = True
                     prevPos = (x,y) #Store it so next time we know the origin
                 else: #Something had been clicked previously
                     #Find out location of previous click:
                     x,y = prevPos
                     if (x,y)==(x2,y2): #User clicked on the same square again.
                         #So
-                        isClicked = False
+                        is_clicked = False
                         #Destroy all shades:
                         createShades([])
                     else:
@@ -502,19 +502,19 @@ while not gameEnded:
                             #User clicked on a square that is occupied by their
                             #own piece.
                             #This is like making a first click on your own piece:
-                            isClicked = True
+                            is_clicked = True
                             prevPos = (x2,y2) #Store it
                         else:
                             #The user may or may not have clicked on a valid target square.
-                            isClicked = False
+                            is_clicked = False
                             #Destory all shades
                             createShades([])
-                            isTransition = True #Possibly if the move was valid.
+                            is_transition = True #Possibly if the move was valid.
 
 
             if not (x2,y2) in listofTuples:
                 #Move was invalid
-                isTransition = False
+                is_transition = False
                 continue
             #Reaching here means a valid move was selected.
             #If the recording option was selected, store the move to the opening dictionary:
@@ -553,16 +553,16 @@ while not gameEnded:
                     colorsign = 1
                 else:
                     colorsign = -1
-                bestMoveReturn = []
+                best_move_return = []
                 move_thread = threading.Thread(target = negamax,
-                            args = (position,3,-1000000,1000000,colorsign,bestMoveReturn))
+                            args = (position,3,-1000000,1000000,colorsign,best_move_return))
                 move_thread.start()
                 is_aiThink = True
             #Move the piece to its new destination:
             dragPiece.setcoord((x2,y2))
             #There may have been a capture, so the piece list should be regenerated.
             #However, if animation is ocurring, the the captured piece should still remain visible.
-            if not isTransition:
+            if not is_transition:
                 list_of_white_pieces,list_of_black_pieces = create_pieces(chess_board)
             else:
                 movingPiece = dragPiece
@@ -574,7 +574,7 @@ while not gameEnded:
             #Either way shades should be deleted now:
             createShades([])
     #If an animation is supposed to happen, make it happen:
-    if isTransition:
+    if is_transition:
         p,q = movingPiece.getpos()
         dx2,dy2 = destiny
         n= 30.0
@@ -585,20 +585,20 @@ while not gameEnded:
             #Generate new piece list in case one got captured:
             list_of_white_pieces,list_of_black_pieces = create_pieces(chess_board)
             #No more transitioning:
-            isTransition = False
+            is_transition = False
             createShades([])
         else:
             #Move it closer to its destination.
             movingPiece.setpos((p+step[0]/n,q+step[1]/n))
     #If a piece is being dragged let the dragging piece follow the mouse:
-    if isDown:
+    if is_down:
         m,k = pygame.mouse.get_pos()
         dragPiece.setpos((m-square_width/2,k-square_height/2))
     #If the AI is thinking, make sure to check if it isn't done thinking yet.
     #Also, if a piece is currently being animated don't ask the AI if it's
     #done thining, in case it replied in the affirmative and starts moving
     #at the same time as your piece is moving:
-    if is_aiThink and not isTransition:
+    if is_aiThink and not is_transition:
         if not move_thread.isAlive():
             #The AI has made a decision.
             #It's no longer thinking
@@ -606,9 +606,9 @@ while not gameEnded:
             #Destroy any shades:
             createShades([])
             #Get the move proposed:
-            #[x,y],[x2,y2] = bestMoveReturn
-            print(f"BestMoveReturn: {bestMoveReturn}")
-            p1, p2 = bestMoveReturn
+            #[x,y],[x2,y2] = best_move_return
+            print(f"best_move_return: {best_move_return}")
+            p1, p2 = best_move_return
             x,y = p1
             x2,y2 = p2
             #Do everything just as if the user made a move by click-click movement:
@@ -627,7 +627,7 @@ while not gameEnded:
                 winner = 'w'
                 chessEnded = True
             #Animate the movement:
-            isTransition = True
+            is_transition = True
             movingPiece = get_piece((x,y))
             origin = chess_coord_to_pixels((x,y))
             destiny = chess_coord_to_pixels((x2,y2))

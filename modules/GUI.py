@@ -22,7 +22,7 @@ def chess_coord_to_pixels(chess_coord):
 #    #If the flipping mode is enabled, and the player to play is black,
 #    #the chess_board should flip, but not until the transition animation for
 #    #white movement is complete:
-#    if not isFlip or player==0 ^ isTransition:
+#    if not is_flip or player==0 ^ is_transition:
 #        return (x*square_width, y*square_height)
 #    else:
 #        return ((7-x)*square_width, (7-y)*square_height)
@@ -35,7 +35,7 @@ def pixel_coord_to_chess(pixel_coord):
             return (7-x,7-y)
         else:
             return (x,y)
-#    if not isFlip or player==0 ^ isTransition:
+#    if not is_flip or player==0 ^ is_transition:
 #        return (x,y)
 #    else:
 #        return (7-x,7-y)
@@ -67,7 +67,7 @@ def createShades(listofTuples):
     global listofShades
     #Empty the list
     listofShades = []
-    if isTransition:
+    if is_transition:
         #Nothing should be shaded when a piece is being animated:
         return
     if isDraw:
@@ -120,7 +120,7 @@ def drawchess_board():
         order = [list_of_white_pieces,list_of_black_pieces]
     else:
         order = [list_of_black_pieces,list_of_white_pieces]
-    if isTransition:
+    if is_transition:
         #If a piece is being animated, the player info is changed despite
         #white still capturing over black, for example. Reverse the order:
         order = list(reversed(order))
@@ -133,7 +133,7 @@ def drawchess_board():
             pixel_coord = chess_coord_to_pixels(chess_coord)
             screen.blit(img,pixel_coord)
     #Make shades to show what the previous move played was:
-    if prevMove[0]!=-1 and not isTransition:
+    if prevMove[0]!=-1 and not is_transition:
         x,y,x2,y2 = prevMove
         screen.blit(yellowbox_image,chess_coord_to_pixels((x,y)))
         screen.blit(yellowbox_image,chess_coord_to_pixels((x2,y2)))

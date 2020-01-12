@@ -30,7 +30,7 @@ from modules.evaluation import *
 import time
 MaxAllowedTimeInSeconds = 30
 
-def negamax(curr_position,depth,alpha,beta,colorsign,bestMoveReturn,root=True):
+def negamax(curr_position,depth,alpha,beta,colorsign,best_move_return,root=True):
     ''' generate possible_moves, decide the best move, and use opening table to reduce time.
 
     Args:
@@ -38,7 +38,7 @@ def negamax(curr_position,depth,alpha,beta,colorsign,bestMoveReturn,root=True):
         depth: the depth that search algorithm will look for the next move in.
         alpha and beta: lower and upper bounds to a curr_position's possible
         colorsign: indicates the player to move.
-        bestMoveReturn: is a list that will be assigned the move to be played.
+        best_move_return: is a list that will be assigned the move to be played.
         root: s a variable that keeps track of whether the original node is processing now or a lower node.
 
     Returns:
@@ -52,7 +52,7 @@ def negamax(curr_position,depth,alpha,beta,colorsign,bestMoveReturn,root=True):
     if root:
         dict_key = pos_to_key(curr_position) #Generate dict_key from current curr_position:
         if dict_key in openings_table:
-            bestMoveReturn[:] = random.choice(openings_table[dict_key]) #Return the best move to be played:
+            best_move_return[:] = random.choice(openings_table[dict_key]) #Return the best move to be played:
             return
 
     global searched  # Access global variable that will store scores of positions already evaluated:
@@ -97,7 +97,7 @@ def negamax(curr_position,depth,alpha,beta,colorsign,bestMoveReturn,root=True):
 
     if root: #If this is the root node, return the best move:
         searched = {}
-        bestMoveReturn[:] = best_move
+        best_move_return[:] = best_move
         return
     return best_value
 
