@@ -69,7 +69,7 @@ king_endgame_table = [-50,-40,-30,-20,-20,-30,-40,-50,
 
 def evaluate(position):
     ''' This function takes as input a position to be analysed.  It will
-    look at the positioning of pieces on the board to judge whether white has an advantage or black.
+    look at the positioning of pieces on the chess_board to judge whether white has an advantage or black.
 
     Args:
         position: current place for chess piece.
@@ -90,15 +90,15 @@ def evaluate(position):
         return 20000
 
         '''
-        getboard() from class gamePosition which is should be added
+        getchess_board() from class gamePosition which is should be added
         ??????????????????????????????????????????????????
         '''
-    #Get the board:
-    board = position.getboard()
-    #Flatten the board to a 1D array for faster calculations:
-    flat_board = [x for row in board for x in row]
+    #Get the chess_board:
+    chess_board = position.getchess_board()
+    #Flatten the chess_board to a 1D array for faster calculations:
+    flat_chess_board = [x for row in chess_board for x in row]
     #Create a counter object to count number of each pieces:
-    c = Counter(flat_board)
+    c = Counter(flat_chess_board)
     Qw = c['Qw']
     Qb = c['Qb']
     Rw = c['Rw']
@@ -122,33 +122,33 @@ def evaluate(position):
     if numofmoves>40 or (whiteMaterial<14 and blackMaterial<14):
         gamephase = 'ending'
     
-    Dw = doubled_pawns(board,'white')
-    Db = doubled_pawns(board,'black')
-    Sw = blocked_pawns(board,'white')
-    Sb = blocked_pawns(board,'black')
-    Iw = isolated_pawns(board,'white')
-    Ib = isolated_pawns(board,'black')
-    Adv_pawn_w =advanced_pawns(board,'white')
-    Adv_pawn_b = advanced_pawns(board, 'black')
-    bp=bishop_pair(board)
+    Dw = doubled_pawns(chess_board,'white')
+    Db = doubled_pawns(chess_board,'black')
+    Sw = blocked_pawns(chess_board,'white')
+    Sb = blocked_pawns(chess_board,'black')
+    Iw = isolated_pawns(chess_board,'white')
+    Ib = isolated_pawns(chess_board,'black')
+    Adv_pawn_w =advanced_pawns(chess_board,'white')
+    Adv_pawn_b = advanced_pawns(chess_board, 'black')
+    bp=bishop_pair(chess_board)
 
     #Calculating the evaluation using the weights. The weights here are given by hand.
     evaluation1 = 900*(Qw - Qb) + 500*(Rw - Rb) +330*(Bw-Bb
                 )+320*(Nw - Nb) +100*(Pw - Pb) +-30*(Dw-Db + Sw-Sb + Iw- Ib
                 )+300*(Adv_pawn_w-Adv_pawn_b)+30*bp
     #Evaluation of piece square tables:
-    evaluation2 = piece_square_table(flat_board,gamephase)
+    evaluation2 = piece_square_table(flat_chess_board,gamephase)
     #total:
     evaluation = evaluation1 + evaluation2
     return evaluation
 
 
-def piece_square_table(flat_board,gamephase):
+def piece_square_table(flat_chess_board,gamephase):
     ''' Gives a position a score based solely on tables that define points for each position for each piece type
 
     Args:
-        flat_board: a 1D array of the board for faster calculations:
-        gamephase:  Make the AI smarter when analysing boards and has not been
+        flat_chess_board: a 1D array of the chess_board for faster calculations:
+        gamephase:  Make the AI smarter when analysing chess_boards and has not been
 
     Returns:
         It returnes the score of the pieces.
@@ -157,11 +157,11 @@ def piece_square_table(flat_board,gamephase):
     score = 0
 
     for i in range(64):
-        if flat_board[i]==0:
+        if flat_chess_board[i]==0:
             continue
 
-        piece = flat_board[i][0]
-        colour = flat_board[i][1]
+        piece = flat_chess_board[i][0]
+        colour = flat_chess_board[i][1]
         sign = +1
 
         if colour=='b':
@@ -184,12 +184,12 @@ def piece_square_table(flat_board,gamephase):
                 score+=sign*king_endgame_table[i]
     return score
 
-def doubled_pawns(board,colour):
+def doubled_pawns(chess_board,colour):
     '''' This function counts the number of doubled pawns for a player and returns it.
     Doubled pawns are those that are on the same file.
 
     Args:
-        board: current board state.
+        chess_board: current chess_board state.
         colour:  white or black????
 
     Returns:
@@ -198,7 +198,7 @@ def doubled_pawns(board,colour):
 
     colour = colour[0]
 
-    list_of_pawns = look_for(board,'P'+colour)
+    list_of_pawns = look_for(chess_board,'P'+colour)
     reps = 0
     temp = []
     for pawn_pos in list_of_pawns:
@@ -209,12 +209,12 @@ def doubled_pawns(board,colour):
     return reps
 
 
-def blocked_pawns(board,colour):
+def blocked_pawns(chess_board,colour):
     '''' This function counts the number of blocked pawns for a player and returns it.
     Blocked pawns are those that have a piece in front of them and so cannot advance forward.
 
     Args:
-        board: current board state.
+        chess_board: current chess_board state.
         colour:  white or black????
 
     Returns:
@@ -222,25 +222,25 @@ def blocked_pawns(board,colour):
     '''
 
     colour = colour[0]
-    list_of_pawns = look_for(board,'P'+colour)
+    list_of_pawns = look_for(chess_board,'P'+colour)
     blocked = 0
 
     for pawn_pos in list_of_pawns:
-        if ((colour=='w' and is_occupied_by(board,pawn_pos[0],pawn_pos[1]-1,
+        if ((colour=='w' and is_occupied_by(chess_board,pawn_pos[0],pawn_pos[1]-1,
                                        'black'))
-            or (colour=='b' and is_occupied_by(board,pawn_pos[0],pawn_pos[1]+1,
+            or (colour=='b' and is_occupied_by(chess_board,pawn_pos[0],pawn_pos[1]+1,
                                        'white'))):
             blocked = blocked + 1
     return blocked
 
 
 
-def isolated_pawns(board,colour):
+def isolated_pawns(chess_board,colour):
     ''''  This function counts the number of isolated pawns for a player. These are pawns
     that do not have supporting pawns on adjacent files and so are difficult to protect.
 
     Args:
-        board: current board state.
+        chess_board: current chess_board state.
         colour:  white or black????
 
     Returns:
@@ -248,7 +248,7 @@ def isolated_pawns(board,colour):
     '''
 
     colour = colour[0]
-    list_of_pawns = look_for(board,'P'+colour)
+    list_of_pawns = look_for(chess_board,'P'+colour)
     x_list = [x for (x,y) in list_of_pawns]
     isolated = 0
     for x in x_list:
@@ -263,11 +263,11 @@ def isolated_pawns(board,colour):
             isolated+=1
     return isolated
 
-def advanced_pawns(board,colour):
+def advanced_pawns(chess_board,colour):
     advanced_pawn_mul = 40
     promotable_bonus = 350
     score = 0
-    list_of_pawns = look_for(board, 'P' + colour)
+    list_of_pawns = look_for(chess_board, 'P' + colour)
     for piece in list_of_pawns:
         if piece.colour == 'white':
             if piece.y >= 4:
@@ -282,30 +282,30 @@ def advanced_pawns(board,colour):
     return score
 
 
-def knight_on_edge(board,colour):
+def knight_on_edge(chess_board,colour):
     knight_on_edge_score = -50
-    list_of_knights = look_for(board, 'N' + colour)
+    list_of_knights = look_for(chess_board, 'N' + colour)
     return sum(knight_on_edge_score * (1 if p.colour == 'white' else -1)
                for p in list_of_knights if p.col in 'ah')
 
-def get_pieces(board, colour):
+def get_pieces(chess_board, colour):
 
     """
-    This function returns a list of positions of all the pieces on the board of a particular colour.
+    This function returns a list of positions of all the pieces on the chess_board of a particular colour.
     """
     print('***********')
 
     list_of_pieces = []
     for j in range(8):
         for i in range(8):
-            if is_occupied_by(board, i, j, colour):
-                list_of_pieces.append(board[j][i][0])
+            if is_occupied_by(chess_board, i, j, colour):
+                list_of_pieces.append(chess_board[j][i][0])
     return list_of_pieces
 
 
-def bishop_pair(board):
+def bishop_pair(chess_board):
     bishop_pair_bonus = 50
-    white_bishops = look_for(board, 'B' + 'white')
-    black_bishops = look_for(board, 'B' + 'black')
+    white_bishops = look_for(chess_board, 'B' + 'white')
+    black_bishops = look_for(chess_board, 'B' + 'black')
     return (bishop_pair_bonus if len(white_bishops) >= 2 else 0
           - bishop_pair_bonus if len(black_bishops) >= 2 else 0)

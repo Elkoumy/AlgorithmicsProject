@@ -1,6 +1,6 @@
 # Piece - This is also used for GUI. A Piece object stores the information about the image
 # that a piece should display (pawn, queen, etc.) and the coordinate at which it should be
-# displayed on thee chess board.
+# displayed on thee chess chess_board.
 
 class Piece:
     def __init__(self,pieceinfo,chess_coord,square_width,square_height):
@@ -13,7 +13,7 @@ class Piece:
         #Get the information about where the image for this piece is stored
         #on the overall sprite image with all the pieces. Note that
         #square_width and square_height represent the size of a square on the
-        #chess board.
+        #chess chess_board.
         if piece=='K':
             index = 0
         elif piece=='Q':
@@ -37,7 +37,7 @@ class Piece:
         #piece:
         self.subsection = (left_x,left_y,self.square_width,self.square_height)
         #There are two ways that the position of a piece is defined on the
-        #board. The default one used is the chess_coord, which stores something
+        #chess_board. The default one used is the chess_coord, which stores something
         #like (3,2). It represents the chess coordinate where our piece image should
         #be blitted. On the other hand, is pos does not hold the default value
         #of (-1,-1), it will hold pixel coordinates such as (420,360) that represents

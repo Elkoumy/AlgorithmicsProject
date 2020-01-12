@@ -9,7 +9,7 @@ def chess_coord_to_pixels(chess_coord):
     x,y = chess_coord
     #There are two sets of coordinates that this function could choose to return.
     #One is the coordinates that would be usually returned, the other is one that
-    #would be returned if the board were to be flipped.
+    #would be returned if the chess_board were to be flipped.
     #Note that square width and height variables are defined in the main function and 
     #so are accessible here as global variables.
     if isAI:
@@ -20,7 +20,7 @@ def chess_coord_to_pixels(chess_coord):
             return (x*square_width, y*square_height)
 #    #Being here means two player game is being played.
 #    #If the flipping mode is enabled, and the player to play is black,
-#    #the board should flip, but not until the transition animation for 
+#    #the chess_board should flip, but not until the transition animation for
 #    #white movement is complete:
 #    if not isFlip or player==0 ^ isTransition:
 #        return (x*square_width, y*square_height)
@@ -45,19 +45,19 @@ def get_piece(chess_coord):
         #by piece.
         if piece.getInfo()[0] == chess_coord:
             return piece
-def create_pieces(board):
+def create_pieces(chess_board):
     #Initialize containers:
     list_of_white_pieces = []
     list_of_black_pieces = []
     #Loop through all squares:
     for i in range(8):
         for k in range(8):
-            if board[i][k]!=0:
+            if chess_board[i][k]!=0:
                 #The square is not empty, create a piece object:
-                p = Piece(board[i][k],(k,i),square_width,square_height)
+                p = Piece(chess_board[i][k],(k,i),square_width,square_height)
                 #Append the reference to the object to the appropriate
                 #list:
-                if board[i][k][1]=='w':
+                if chess_board[i][k][1]=='w':
                     list_of_white_pieces.append(p)
                 else:
                     list_of_black_pieces.append(p)
@@ -73,10 +73,10 @@ def createShades(listofTuples):
     if isDraw:
         #The game ended with a draw. Make yellow circle shades for
         #both the kings to show this is the case:
-        coord = lookfor(board,'Kw')[0]
+        coord = lookfor(chess_board,'Kw')[0]
         shade = Shades(circle_image_yellow,coord)
         listofShades.append(shade)
-        coord = lookfor(board,'Kb')[0]
+        coord = lookfor(chess_board,'Kb')[0]
         shade = Shades(circle_image_yellow,coord)
         listofShades.append(shade)
         #There is no need to go further:
@@ -85,16 +85,16 @@ def createShades(listofTuples):
         #The game has ended, with a checkmate because it cannot be a 
         #draw if the code reached here.
         #Give the winning king a green circle shade:
-        coord = lookfor(board,'K'+winner)[0]
+        coord = lookfor(chess_board,'K'+winner)[0]
         shade = Shades(circle_image_green_big,coord)
         listofShades.append(shade)
     #If either king is under attack, give them a red circle:
     if isCheck(position,'white'):
-        coord = lookfor(board,'Kw')[0]
+        coord = lookfor(chess_board,'Kw')[0]
         shade = Shades(circle_image_red,coord)
         listofShades.append(shade)
     if isCheck(position,'black'):
-        coord = lookfor(board,'Kb')[0]
+        coord = lookfor(chess_board,'Kb')[0]
         shade = Shades(circle_image_red,coord)
         listofShades.append(shade)
     #Go through all the target squares inputted:
@@ -102,14 +102,14 @@ def createShades(listofTuples):
         #If the target square is occupied, it can be captured.
         #For a capturable square, there is a different shade.
         #Create the appropriate shade for each target square:
-        if isOccupied(board,pos[0],pos[1]):
+        if isOccupied(chess_board,pos[0],pos[1]):
             img = circle_image_capture
         else:
             img = circle_image_green
         shade = Shades(img,pos)
         #Append:
         listofShades.append(shade)
-def drawBoard():
+def drawchess_board():
     #Blit the background:
     screen.blit(background,(0,0))
     #Choose the order in which to blit the pieces.

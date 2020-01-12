@@ -1,7 +1,7 @@
 #GamePosition - This class stores a chess position. A chess position constitutes several
 # features that specify the state of the game, such as the the player that has to play next,
 # castling rights of the players, number of irreversible moves played so far, the positions of
-# pieces on the board, etc.
+# pieces on the chess_board, etc.
 import copy
 
 
@@ -12,8 +12,8 @@ from modules.chess_processing import pos_to_key
 #from modules import chess_processing
 #from modules import *
 class GamePosition:
-    def __init__(self,board,player,castling_rights,EnP_Target,HMC,history = {}):
-        self.board = board #A 2D array containing information about piece postitions. Check main
+    def __init__(self,chess_board,player,castling_rights,EnP_Target,HMC,history = {}):
+        self.chess_board = chess_board #A 2D array containing information about piece postitions. Check main
         #function to see an example of such a representation.
         self.player = player #Stores the side to move. If white to play, equals 0. If black to
         #play, stores 1.
@@ -25,10 +25,10 @@ class GamePosition:
         self.history = history #A dictionary that stores as key a position (hashed) and the value of each of
         #these keys represents the number of times each of these positions was repeated in order for this
         #position to be reached.
-    def getboard(self):
-        return self.board
-    def setboard(self,board):
-        self.board = board
+    def getchess_board(self):
+        return self.chess_board
+    def setchess_board(self,chess_board):
+        self.chess_board = chess_board
     def getplayer(self):
         return self.player
     def setplayer(self,player):
@@ -60,7 +60,7 @@ class GamePosition:
     def clone(self):
         #This method returns another instance of the current object with exactly the same
         #parameters but independent of the current object.
-        clone = GamePosition(copy.deepcopy(self.board), #Independent copy
+        clone = GamePosition(copy.deepcopy(self.chess_board), #Independent copy
                              self.player,
                              copy.deepcopy(self.castling), #Independent copy
                              self.EnP,
