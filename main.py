@@ -289,15 +289,13 @@ withAI_pic = pygame.image.load(os.path.join('Media', 'withAI.png')).convert_alph
 playwhite_pic = pygame.image.load(os.path.join('Media', 'start.png')).convert_alpha()
 playblack_pic = pygame.image.load(os.path.join('Media', 'playBlack.png')).convert_alpha()
 
-#Getting sizes:
-#Get background size:
 size_of_bg = background.get_rect().size
-#Get size of the individual squares
+
 square_width =int( size_of_bg[0]/8)
 square_height = int(size_of_bg[1]/8)
 
 
-#Rescale the images so that each piece can fit in a square:
+
 pieces_image = pygame.transform.scale(pieces_image,
                                       (square_width*6,square_height*2))
 circle_image_green = pygame.transform.scale(circle_image_green,
@@ -314,31 +312,22 @@ circle_image_yellow = pygame.transform.scale(circle_image_yellow,
                                              (square_width, square_height))
 circle_image_green_big = pygame.transform.scale(circle_image_green_big,
                                              (square_width, square_height))
-# withfriend_pic = pygame.transform.scale(withfriend_pic,
-#                                       (square_width*4,square_height*4))
+
 withAI_pic = pygame.transform.scale(withAI_pic,
                                       (square_width*4,square_height*4))
 playwhite_pic = pygame.transform.scale(playwhite_pic,
                                       (square_width*4,square_height*4))
 playblack_pic = pygame.transform.scale(playblack_pic,
                                       (square_width*4,square_height*4))
-# flipEnabled_pic = pygame.transform.scale(flipEnabled_pic,
-#                                       (square_width*4,square_height*4))
-# flipDisabled_pic = pygame.transform.scale(flipDisabled_pic,
-#                                       (square_width*4,square_height*4))
 
 
-
-#Make a window of the same size as the background, set its title, and
-#load the background image onto it (the chess_board):
 screen = pygame.display.set_mode(size_of_bg)
 pygame.display.set_caption('Shallow Green')
 screen.blit(background,(0,0))
 
-#Generate a list of pieces that should be drawn on the chess_board:
+
 list_of_white_pieces,list_of_black_pieces = create_pieces(chess_board)
-#(the list contains references to objects of the class Piece)
-#Initialize a list of shades:
+
 list_of_shades = []
 
 clock = pygame.time.Clock() #Helps controlling fps of the game.
