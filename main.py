@@ -450,7 +450,7 @@ while not game_ended:
             is_down = True
         if (is_down or is_clicked) and event.type == MOUSEBUTTONUP:
             is_down = False
-            drag_piece.setpos((-1,-1))
+            drag_piece.set_pos((-1,-1))
             pos = pygame.mouse.get_pos()
             chess_coord = pixel_coord_to_chess(pos)
             chess_coord = (int(chess_coord[0]), int(chess_coord[1]))
@@ -527,50 +527,34 @@ while not game_ended:
                 moving_piece = drag_piece
                 origin = chess_coord_to_pixels((x,y))
                 destiny = chess_coord_to_pixels((x2,y2))
-                moving_piece.setpos(origin)
+                moving_piece.set_pos(origin)
                 step = (destiny[0]-origin[0],destiny[1]-origin[1])
 
-            #Either way shades should be deleted now:
             create_shades([])
-    #If an animation is supposed to happen, make it happen:
     if is_transition:
-        p,q = moving_piece.getpos()
+        p,q = moving_piece.get_pos()
         dx2,dy2 = destiny
         n= 30.0
         if abs(p-dx2)<=abs(step[0]/n) and abs(q-dy2)<=abs(step[1]/n):
-            #The moving piece has reached its destination:
-            #Snap it back to its grid position:
-            moving_piece.setpos((-1,-1))
-            #Generate new piece list in case one got captured:
+            moving_piece.set_pos((-1,-1))
             list_of_white_pieces,list_of_black_pieces = create_pieces(chess_board)
-            #No more transitioning:
             is_transition = False
             create_shades([])
         else:
-            #Move it closer to its destination.
-            moving_piece.setpos((p+step[0]/n,q+step[1]/n))
-    #If a piece is being dragged let the dragging piece follow the mouse:
+            moving_piece.set_pos((p+step[0]/n,q+step[1]/n))
     if is_down:
         m,k = pygame.mouse.get_pos()
-        drag_piece.setpos((m-square_width/2,k-square_height/2))
-    #If the AI is thinking, make sure to check if it isn't done thinking yet.
-    #Also, if a piece is currently being animated don't ask the AI if it's
-    #done thining, in case it replied in the affirmative and starts moving
-    #at the same time as your piece is moving:
+        drag_piece.set_pos((m-square_width/2,k-square_height/2))
+
     if is_aiThink and not is_transition:
         if not move_thread.isAlive():
-            #The AI has made a decision.
-            #It's no longer thinking
+
             is_aiThink = False
-            #Destroy any shades:
             create_shades([])
-            #Get the move proposed:
-            #[x,y],[x2,y2] = best_move_return
             print(f"best_move_return: {best_move_return}")
             p1, p2 = best_move_return
             x,y = p1
             x2,y2 = p2
-            #Do everything just as if the user made a move by click-click movement:
             make_move(position,x,y,x2,y2)
             prev_move = [x,y,x2,y2]
             player = position.get_player()
@@ -590,7 +574,7 @@ while not game_ended:
             moving_piece = get_piece((x,y))
             origin = chess_coord_to_pixels((x,y))
             destiny = chess_coord_to_pixels((x2,y2))
-            moving_piece.setpos(origin)
+            moving_piece.set_pos(origin)
             step = (destiny[0]-origin[0],destiny[1]-origin[1])
 
     #Update positions of all images:

@@ -49,9 +49,9 @@ class Piece:
     #The methods are self explanatory:
     def getInfo(self):
         return [self.chess_coord, self.subsection,self.pos]
-    def setpos(self,pos):
+    def set_pos(self,pos):
         self.pos = pos
-    def getpos(self):
+    def get_pos(self):
         return self.pos
     def setcoord(self,coord):
         self.chess_coord = coord
