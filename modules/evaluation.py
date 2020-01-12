@@ -141,11 +141,13 @@ def evaluate(position):
     Ib = isolatedPawns(board,'black')
     Adv_pawn_w =advanced_pawns(board,'white')
     Adv_pawn_b = advanced_pawns(board, 'black')
-
+    bp=bishop_pair(board)
+    # ke= bishop_pair(board)
+    # print(ke)
     #Evaluate position based on above data:
     evaluation1 = 900*(Qw - Qb) + 500*(Rw - Rb) +330*(Bw-Bb
                 )+320*(Nw - Nb) +100*(Pw - Pb) +-30*(Dw-Db + Sw-Sb + Iw- Ib
-                )+300*(Adv_pawn_w-Adv_pawn_b)
+                )+300*(Adv_pawn_w-Adv_pawn_b)+30*bp
     #Evaluate position based on piece square tables:
     evaluation2 = pieceSquareTable(flatboard,gamephase)
     #Sum the evaluations:
@@ -211,6 +213,8 @@ def pieceSquareTable(flatboard,gamephase):
 # and so are difficult to protect.
 #
 #
+
+
 
 
 def doubledPawns(board,color):
@@ -317,3 +321,34 @@ def advanced_pawns(board,color):
             if piece.is_promotable:
                 score -= promotable_bonus
     return score
+
+
+def knight_on_edge(board,color):
+    knight_on_edge_score = -50
+    list_of_knights = look_for(board, 'N' + color)
+    #east_west_edges = board_east_edge + board_west_edge
+    return sum(knight_on_edge_score * (1 if p.color == 'white' else -1)
+               for p in list_of_knights if p.col in 'ah')
+
+def get_pieces(board, color):
+
+    """
+    This function returns a list of positions of all the pieces on the board of a particular color.
+    """
+    print('***********')
+
+    list_of_pieces = []
+    for j in range(8):
+        for i in range(8):
+
+            if is_occupied_by(board, i, j, color):
+                list_of_pieces.append(board[j][i][0])
+    return list_of_pieces
+
+
+def bishop_pair(board):
+    bishop_pair_bonus = 50
+    white_bishops = look_for(board, 'B' + 'white')
+    black_bishops = look_for(board, 'B' + 'black')
+    return (bishop_pair_bonus if len(white_bishops) >= 2 else 0
+          - bishop_pair_bonus if len(black_bishops) >= 2 else 0)
