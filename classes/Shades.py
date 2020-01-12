@@ -13,3 +13,4 @@ class Shades:
         return [self.image,self.pos]
 
         
+
