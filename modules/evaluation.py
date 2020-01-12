@@ -96,9 +96,9 @@ def evaluate(position):
     #Get the board:
     board = position.getboard()
     #Flatten the board to a 1D array for faster calculations:
-    flatboard = [x for row in board for x in row]
+    flat_board = [x for row in board for x in row]
     #Create a counter object to count number of each pieces:
-    c = Counter(flatboard)
+    c = Counter(flat_board)
     Qw = c['Qw']
     Qb = c['Qb']
     Rw = c['Rw']
@@ -109,12 +109,7 @@ def evaluate(position):
     Nb = c['Nb']
     Pw = c['Pw']
     Pb = c['Pb']
-    #Note: The above choices to flatten the board and to use a library
-    #to count pieces were attempts at making the AI more efficient.
-    #Perhaps using a 1D board throughout the entire program is one way
-    #to make the code more efficient.
-    #Calculate amount of material on both sides and the number of moves
-    #played so far in order to determine game phase:
+
     whiteMaterial = 9*Qw + 5*Rw + 3*Nw + 3*Bw + 1*Pw
     blackMaterial = 9*Qb + 5*Rb + 3*Nb + 3*Bb + 1*Pb
     '''
@@ -126,15 +121,9 @@ def evaluate(position):
     gamephase = 'opening'
     if numofmoves>40 or (whiteMaterial<14 and blackMaterial<14):
         gamephase = 'ending'
-    #A note again: Determining game phase is again one the attempts
-    #to make the AI smarter when analysing boards and has not been
-    #implemented to its full potential.
-
-
-    #Calculate number of doubled, blocked, and isolated pawns for
-    #both sides:
-    Dw = doubledPawns(board,'white')
-    Db = doubledPawns(board,'black')
+    
+    Dw = doubled_pawns(board,'white')
+    Db = doubled_pawns(board,'black')
     Sw = blocked_pawns(board,'white')
     Sb = blocked_pawns(board,'black')
     Iw = isolated_pawns(board,'white')
@@ -148,20 +137,17 @@ def evaluate(position):
                 )+320*(Nw - Nb) +100*(Pw - Pb) +-30*(Dw-Db + Sw-Sb + Iw- Ib
                 )+300*(Adv_pawn_w-Adv_pawn_b)+30*bp
     #Evaluation of piece square tables:
-    evaluation2 = pieceSquareTable(flatboard,gamephase)
-    #Sum the evaluations:
+    evaluation2 = piece_square_table(flat_board,gamephase)
+    #total:
     evaluation = evaluation1 + evaluation2
-
-    #Return it:
     return evaluation
 
 
-## this function needs to be modified for more accurate results.
-def pieceSquareTable(flatboard,gamephase):
+def piece_square_table(flat_board,gamephase):
     ''' Gives a position a score based solely on tables that define points for each position for each piece type
 
     Args:
-        flatboard: a 1D array of the board for faster calculations:
+        flat_board: a 1D array of the board for faster calculations:
         gamephase:  Make the AI smarter when analysing boards and has not been
 
     Returns:
@@ -171,11 +157,11 @@ def pieceSquareTable(flatboard,gamephase):
     score = 0
 
     for i in range(64):
-        if flatboard[i]==0:
+        if flat_board[i]==0:
             continue
 
-        piece = flatboard[i][0]
-        colour = flatboard[i][1]
+        piece = flat_board[i][0]
+        colour = flat_board[i][1]
         sign = +1
 
         if colour=='b':
@@ -198,7 +184,7 @@ def pieceSquareTable(flatboard,gamephase):
                 score+=sign*king_endgame_table[i]
     return score
 
-def doubledPawns(board,colour):
+def doubled_pawns(board,colour):
     '''' This function counts the number of doubled pawns for a player and returns it.
     Doubled pawns are those that are on the same file.
 
