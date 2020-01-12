@@ -63,7 +63,7 @@ def create_pieces(chess_board):
                     list_of_black_pieces.append(p)
     #Return both:
     return [list_of_white_pieces,list_of_black_pieces]
-def createShades(listofTuples):
+def createShades(list_of_tuples):
     global listofShades
     #Empty the list
     listofShades = []
@@ -98,7 +98,7 @@ def createShades(listofTuples):
         shade = Shades(circle_image_red,coord)
         listofShades.append(shade)
     #Go through all the target squares inputted:
-    for pos in listofTuples:
+    for pos in list_of_tuples:
         #If the target square is occupied, it can be captured.
         #For a capturable square, there is a different shade.
         #Create the appropriate shade for each target square:

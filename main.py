@@ -75,7 +75,7 @@ def create_pieces(chess_board):
                 else:
                     list_of_black_pieces.append(p)
     return [list_of_white_pieces,list_of_black_pieces]
-def createShades(listofTuples):
+def createShades(list_of_tuples):
     global list_of_shades
     #Empty the list
     list_of_shades = []
@@ -110,7 +110,7 @@ def createShades(listofTuples):
         shade = Shades.Shades(circle_image_red,coord)
         list_of_shades.append(shade)
     #Go through all the target squares inputted:
-    for pos in listofTuples:
+    for pos in list_of_tuples:
         #If the target square is occupied, it can be captured.
         #For a capturable square, there is a different shade.
         #Create the appropriate shade for each target square:
@@ -399,13 +399,8 @@ while not game_ended:
                 is_flip = False
                 is_ai = True
         pygame.display.update()
-#        clock.tick(60)
         continue
-    #Menu part was done if this part reached.
-    #If the AI is currently thinking the move to play
-    #next, show some fancy looking squares to indicate
-    #that.
-    #Do it every 6 frames so it's not too fast:
+
     numm+=1
     if is_aiThink and numm%6==0:
         ax+=1
@@ -416,53 +411,38 @@ while not game_ended:
             ax,ay=0,0
         if ax%4==0:
             createShades([])
-        #If the AI is white, start from the opposite side (since the chess_board is flipped)
         if ai_player==0:
             list_of_shades.append(Shades.Shades(greenbox_image,(7-ax,7-ay)))
         else:
             list_of_shades.append(Shades.Shades(greenbox_image,(ax,ay)))
 
     for event in pygame.event.get():
-        #Deal with all the user inputs:
 
         if event.type==QUIT:
-            #Window was closed.
             game_ended = True
 
             break
-        #Under the following conditions, user input should be
-        #completely ignored:
         if chessEnded or is_transition or is_aiThink:
             continue
-        #is_down means a piece is being dragged.
         if not is_down and event.type == MOUSEBUTTONDOWN:
-            #Mouse was pressed down.
-            #Get the oordinates of the mouse
+
             pos = pygame.mouse.get_pos()
-            #convert to chess coordinates:
             chess_coord = pixel_coord_to_chess(pos)
             chess_coord=(int(chess_coord[0]),int(chess_coord[1]))
 
             x =chess_coord[0]
             y = chess_coord[1]
 
-            #If the piece clicked on is not occupied by your own piece,
-            #ignore this mouse click:
             if not is_occupied_by(chess_board,x,y,'wb'[player]):
                 continue
-            #Now we're sure the user is holding their mouse on a
-            #piecec that is theirs.
-            #Get reference to the piece that should be dragged around or selected:
-            dragPiece = get_piece(chess_coord)
-            print(dragPiece)
-            #Find the possible squares that this piece could attack:
-            listofTuples = find_possible_squares(position,x,y)
-            #Highlight all such squares:
-            createShades(listofTuples)
-            #A green box should appear on the square which was selected, unless
-            #it's a king under check, in which case it shouldn't because the king
-            #has a red color on it in that case.
-            if ((dragPiece.pieceinfo[0]=='K') and
+
+            drag_piece = get_piece(chess_coord)
+            print(drag_piece)
+            list_of_tuples = find_possible_squares(position,x,y)
+
+            createShades(list_of_tuples)
+
+            if ((drag_piece.pieceinfo[0]=='K') and
                 (is_check(position,'white') or is_check(position,'black'))):
                 None
             else:
@@ -473,7 +453,7 @@ while not game_ended:
             #Mouse was released.
             is_down = False
             #Snap the piece back to its coordinate position
-            dragPiece.setpos((-1,-1))
+            drag_piece.setpos((-1,-1))
             #Get coordinates and convert them:
             pos = pygame.mouse.get_pos()
             chess_coord = pixel_coord_to_chess(pos)
@@ -512,7 +492,7 @@ while not game_ended:
                             is_transition = True #Possibly if the move was valid.
 
 
-            if not (x2,y2) in listofTuples:
+            if not (x2,y2) in list_of_tuples:
                 #Move was invalid
                 is_transition = False
                 continue
@@ -559,13 +539,13 @@ while not game_ended:
                 move_thread.start()
                 is_aiThink = True
             #Move the piece to its new destination:
-            dragPiece.setcoord((x2,y2))
+            drag_piece.setcoord((x2,y2))
             #There may have been a capture, so the piece list should be regenerated.
             #However, if animation is ocurring, the the captured piece should still remain visible.
             if not is_transition:
                 list_of_white_pieces,list_of_black_pieces = create_pieces(chess_board)
             else:
-                movingPiece = dragPiece
+                movingPiece = drag_piece
                 origin = chess_coord_to_pixels((x,y))
                 destiny = chess_coord_to_pixels((x2,y2))
                 movingPiece.setpos(origin)
@@ -593,7 +573,7 @@ while not game_ended:
     #If a piece is being dragged let the dragging piece follow the mouse:
     if is_down:
         m,k = pygame.mouse.get_pos()
-        dragPiece.setpos((m-square_width/2,k-square_height/2))
+        drag_piece.setpos((m-square_width/2,k-square_height/2))
     #If the AI is thinking, make sure to check if it isn't done thinking yet.
     #Also, if a piece is currently being animated don't ask the AI if it's
     #done thining, in case it replied in the affirmative and starts moving
