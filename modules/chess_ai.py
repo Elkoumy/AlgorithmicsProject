@@ -30,97 +30,75 @@ from modules.evaluation import *
 import time
 MaxAllowedTimeInSeconds = 30
 
-def negamax(position,depth,alpha,beta,colorsign,bestMoveReturn,root=True):
-    ''' generate moves, decide the best move, and use openning table to reduce time.
+def negamax(curr_position,depth,alpha,beta,colorsign,bestMoveReturn,root=True):
+    ''' generate possible_moves, decide the best move, and use opening table to reduce time.
 
     Args:
-        position: current place for chess piece.
+        curr_position: current place for chess piece.
         depth: the depth that search algorithm will look for the next move in.
-        alpha and beta: lower and upper bounds to a position's possible
+        alpha and beta: lower and upper bounds to a curr_position's possible
         colorsign: indicates the player to move.
         bestMoveReturn: is a list that will be assigned the move to be played.
         root: s a variable that keeps track of whether the original node is processing now or a lower node.
 
     Returns:
-        best move to be played if we at the root node, else returns the best value.
+        best move to be played if we at the root node, else returns the best dict_value.
     '''
-    # Scoring of each position is also stored in a global dictionary to allow for time-saving if the same
-    # position occurs elsewhere in the tree.
-
-    # First check if the position is already stored in the opening database dictionary:
+    # Scoring of each curr_position is also stored in a global dictionary to allow for time-saving if the same
+    # curr_position occurs elsewhere in the tree.
+    # First check if the curr_position is already stored in the opening database dictionary:
     startTime = time.time()
-
-    openings = defaultdict(list)
+    openings_table = defaultdict(list)
     if root:
-        #Generate key from current position:
-        key = pos_to_key(position)
-        if key in openings:
-            #Return the best move to be played:
-            bestMoveReturn[:] = random.choice(openings[key])
+        dict_key = pos_to_key(curr_position) #Generate dict_key from current curr_position:
+        if dict_key in openings_table:
+            bestMoveReturn[:] = random.choice(openings_table[dict_key]) #Return the best move to be played:
             return
 
-    # Access global variable that will store scores of positions already evaluated:
-    global searched
+    global searched  # Access global variable that will store scores of positions already evaluated:
     searched = {}
 
+    if depth==0: #If the depth is zero, we are at a leaf node (no more depth to be analysed):
+        return colorsign*evaluate(curr_position)
 
-    #If the depth is zero, we are at a leaf node (no more depth to be analysed):
-    if depth==0:
-        return colorsign*evaluate(position)
+    possible_moves = all_moves(curr_position, colorsign) #Generate all the possible_moves that can be played:
 
-    #Generate all the moves that can be played:
-    moves = all_moves(position, colorsign)
+    if possible_moves==[]: #If there are no possible_moves to be played, just evaluate the curr_position and return it:
+        return colorsign*evaluate(curr_position)
 
-    #If there are no moves to be played, just evaluate the position and return it:
-    if moves==[]:
-        return colorsign*evaluate(position)
+    if root: #Initialize a best move for the root node:
+        best_move = possible_moves[0]
 
-    #Initialize a best move for the root node:
-    if root:
-        bestMove = moves[0]
+    best_value = -100000 #Initialize the best move's dict_value:
 
-    #Initialize the best move's value:
-    bestValue = -100000
+    for move in possible_moves: #Go through each move:
+        newpos = curr_position.clone() #Make a clone of the current move and perform the move on it:
+        make_move(newpos,move[0][0],move[0][1],int(move[1][0]),int(move[1][1]))
+        dict_key = pos_to_key(newpos)  #Generate the dict_key for the new resulting curr_position:
 
-    #Go through each move:
-    for move in moves:
-        #Make a clone of the current move and perform the move on it:
-        newpos = position.clone()
-        make_move(newpos,move[0][0],move[0][1],move[1][0],move[1][1])
-        #Generate the key for the new resulting position:
-        key = pos_to_key(newpos)
-        #If this position was already searched before, retrieve its node value.
-        #Otherwise, calculate its node value and store it in the dictionary:
-        if key in searched:
-            value = searched[key]
+        if dict_key in searched:  #If this curr_position was already searched before, retrieve its node dict_value, Otherwise, calculate its node dict_value and store it in the dictionary:
+            dict_value = searched[dict_key]
             print("Exist")
         elif time.time() - startTime > MaxAllowedTimeInSeconds: 
             print("Time Limit")
+            print(depth)
             break
         else:
-            value = -negamax(newpos,depth-1, -beta,-alpha,-colorsign,[],False)
-            searched[key] = value
-        #If this move is better than the best so far:
-        if value>bestValue:
-            #Store it
-            bestValue = value
-            #If we're at root node, store the move as the best move:
-            if root:
-                bestMove = move
-        #Update the lower bound for this node:
-        alpha = max(alpha,value)
-        if alpha>=beta:
-            #If our lower bound is higher than the upper bound for this node, there
-            #is no need to look at further moves:
+            dict_value = -negamax(newpos,depth-1, -beta,-alpha,-colorsign,[],False)
+            searched[dict_key] = dict_value
+
+        if dict_value>best_value: #If this move is better than the best so far:
+            best_value = dict_value
+            if root: #If we're at root node, store the move as the best move:
+                best_move = move
+        alpha = max(alpha,dict_value)  #Update the lower bound for this node:
+        if alpha>=beta: #If our lower bound is higher than the upper bound for this node, there #is no need to look at further possible_moves:
             break
 
-    #If this is the root node, return the best move:
-    if root:
+    if root: #If this is the root node, return the best move:
         searched = {}
-        bestMoveReturn[:] = bestMove
+        bestMoveReturn[:] = best_move
         return
-
-    #Otherwise, return the bestValue (i.e. value for this node.)
-    return bestValue
+    return best_value
 
 

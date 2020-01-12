@@ -307,12 +307,9 @@ circle_image_yellow = pygame.image.load(os.path.join('Media', 'yellow_circle_big
 circle_image_green_big = pygame.image.load(os.path.join('Media', 'green_circle_big.png')).convert_alpha()
 yellowbox_image = pygame.image.load(os.path.join('Media', 'yellow_box.png')).convert_alpha()
 #Menu pictures:
-withfriend_pic = pygame.image.load(os.path.join('Media', 'withfriend.png')).convert_alpha()
 withAI_pic = pygame.image.load(os.path.join('Media', 'withAI.png')).convert_alpha()
-playwhite_pic = pygame.image.load(os.path.join('Media', 'playWhite.png')).convert_alpha()
+playwhite_pic = pygame.image.load(os.path.join('Media', 'start.png')).convert_alpha()
 playblack_pic = pygame.image.load(os.path.join('Media', 'playBlack.png')).convert_alpha()
-flipEnabled_pic = pygame.image.load(os.path.join('Media', 'flipEnabled.png')).convert_alpha()
-flipDisabled_pic = pygame.image.load(os.path.join('Media', 'flipDisabled.png')).convert_alpha()
 
 #Getting sizes:
 #Get background size:
@@ -399,7 +396,7 @@ ax,ay=0,0
 numm = 0
 #For showing the menu and keeping track of user choices:
 isMenu = True
-isAI = -1
+isAI = True
 isFlip = -1
 AIPlayer = -1
 #Finally, a variable to keep false until the user wants to quit:
@@ -407,35 +404,16 @@ gameEnded = False
 #########################INFINITE LOOP#####################################
 #The program remains in this loop until the user quits the application
 while not gameEnded:
+
     if isMenu:
         #Menu needs to be shown right now.
         #Blit the background:
         screen.blit(background,(0,0))
-        if isAI==-1:
-            #The user has not selected between playing against the AI
-            #or playing against a friend.
-            #So allow them to choose between playing with a friend or the AI:
-            #screen.blit(withfriend_pic,(0,square_height*2))
-            screen.blit(withAI_pic,(square_width*4,square_height*2))
-        elif isAI==True:
-            #The user has selected to play against the AI.
-            #Allow the user to play as white or black:
-            screen.blit(playwhite_pic,(0,square_height*2))
-            #screen.blit(playblack_pic,(square_width*4,square_height*2))
-        elif isAI==False:
-            #The user has selected to play with a friend.
-            #Allow choice of flipping the board or not flipping the board:
-            screen.blit(flipDisabled_pic,(0,square_height*2))
-            screen.blit(flipEnabled_pic,(square_width*4,square_height*2))
+        if isAI==True:
+            screen.blit(playwhite_pic,(square_width*2,square_height*2))
         if isFlip!=-1:
-            #All settings have already been specified.
-            #Draw all the pieces onto the board:
             drawBoard()
-            #Don't let the menu ever appear again:
             isMenu = False
-            #In case the player chose to play against the AI and decided to
-            #play as black, call upon the AI to make a move:
-            #if isAI and AIPlayer==0:
             if isAI and AIPlayer==0:
                 colorsign=1
                 bestMoveReturn = []
@@ -445,46 +423,16 @@ while not gameEnded:
                 isAIThink = True
             continue
         for event in pygame.event.get():
-            #Handle the events while in menu:
             if event.type==QUIT:
-                #Window was closed.
                 gameEnded = True
                 break
             if event.type == MOUSEBUTTONUP:
-                #The mouse was clicked somewhere.
-                #Get the coordinates of click:
                 pos = pygame.mouse.get_pos()
-                #Determine if left box was clicked or right box.
-                #Then choose an appropriate action based on current
-                #state of menu:
-                if (pos[0]<square_width*4 and
-                pos[1]>square_height*2 and
-                pos[1]<square_height*6):
-                    #LEFT SIDE CLICKED
-                    if isAI == -1:
-                        isAI = False
-                    elif isAI==True:
-                        AIPlayer = 1
-                        isFlip = False
-                    elif isAI==False:
-                        isFlip = False
-                elif (pos[0]>square_width*4 and
-                pos[1]>square_height*2 and
-                pos[1]<square_height*6):
-                    #RIGHT SIDE CLICKED
-                    if isAI == -1:
-                        isAI = True
-                    elif isAI==True:
-                        AIPlayer = 0
-                        isFlip = False
-                    elif isAI==False:
-                        isFlip=True
-
-        #Update the display:
+                AIPlayer = 1
+                isFlip = False
+                isAI = True
         pygame.display.update()
-
-        #Run at specific fps:
-        clock.tick(60)
+#        clock.tick(60)
         continue
     #Menu part was done if this part reached.
     #If the AI is currently thinking the move to play
@@ -509,6 +457,7 @@ while not gameEnded:
 
     for event in pygame.event.get():
         #Deal with all the user inputs:
+
         if event.type==QUIT:
             #Window was closed.
             gameEnded = True
