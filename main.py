@@ -41,62 +41,40 @@ from modules.chess_ai import *
 ##############################////////GUI FUNCTIONS\\\\\\\\\\\\\#############################
 def chess_coord_to_pixels(chess_coord):
     x,y = chess_coord
-    #There are two sets of coordinates that this function could choose to return.
-    #One is the coordinates that would be usually returned, the other is one that
-    #would be returned if the board were to be flipped.
-    #Note that square width and height variables are defined in the main function and
-    #so are accessible here as global variables.
-    if isAI:
-        if AIPlayer==0:
-            #This means you're playing against the AI and are playing as black:
+
+    if is_ai:
+        if ai_player==0:
             return ((7-x)*square_width, (7-y)*square_height)
         else:
             return (x*square_width, y*square_height)
-#    #Being here means two player game is being played.
-#    #If the flipping mode is enabled, and the player to play is black,
-#    #the board should flip, but not until the transition animation for
-#    #white movement is complete:
-#    if not isFlip or player==0 ^ isTransition:
-#        return (x*square_width, y*square_height)
-#    else:
-#        return ((7-x)*square_width, (7-y)*square_height)
+
 def pixel_coord_to_chess(pixel_coord):
     x,y = pixel_coord[0]/square_width, pixel_coord[1]/square_height
-    #See comments for chess_coord_to_pixels() for an explanation of the
-    #conditions seen here:
-    if isAI:
-        if AIPlayer==0:
+
+    if is_ai:
+        if ai_player==0:
             return (7-x,7-y)
         else:
             return (x,y)
-#    if not isFlip or player==0 ^ isTransition:
-#        return (x,y)
-#    else:
-#        return (7-x,7-y)
-def getPiece(chess_coord):
-    for piece in listofWhitePieces+listofBlackPieces:
+
+def get_piece(chess_coord):
+    for piece in list_of_white_pieces+list_of_black_pieces:
         #piece.getInfo()[0] represents the chess coordinate occupied
         #by piece.
         if piece.getInfo()[0] == chess_coord:
             return piece
-def createPieces(board):
-    #Initialize containers:
-    listofWhitePieces = []
-    listofBlackPieces = []
-    #Loop through all squares:
+def create_pieces(board):
+    list_of_white_pieces = []
+    list_of_black_pieces = []
     for i in range(8):
         for k in range(8):
             if board[i][k]!=0:
-                #The square is not empty, create a piece object:
                 p = Piece.Piece(board[i][k],(k,i),square_width,square_height)
-                #Append the reference to the object to the appropriate
-                #list:
                 if board[i][k][1]=='w':
-                    listofWhitePieces.append(p)
+                    list_of_white_pieces.append(p)
                 else:
-                    listofBlackPieces.append(p)
-    #Return both:
-    return [listofWhitePieces,listofBlackPieces]
+                    list_of_black_pieces.append(p)
+    return [list_of_white_pieces,list_of_black_pieces]
 def createShades(listofTuples):
     global list_of_shades
     #Empty the list
@@ -151,16 +129,16 @@ def drawBoard():
     #should be blitted first, so that when black is capturing,
     #the piece appears above:
     if player==1:
-        order = [listofWhitePieces,listofBlackPieces]
+        order = [list_of_white_pieces,list_of_black_pieces]
     else:
-        order = [listofBlackPieces,listofWhitePieces]
+        order = [list_of_black_pieces,list_of_white_pieces]
     if isTransition:
         #If a piece is being animated, the player info is changed despite
         #white still capturing over black, for example. Reverse the order:
         order = list(reversed(order))
     #The shades which appear during the following three conditions need to be
     #blitted first to appear under the pieces:
-    if is_draw or chessEnded or isAIThink:
+    if is_draw or chessEnded or is_aiThink:
         #Shades
         for shade in list_of_shades:
             img,chess_coord = shade.getInfo()
@@ -189,7 +167,7 @@ def drawBoard():
             #Blit to the specific coordinates:
             screen.blit(pieces_image,pos,subsection)
     #Blit the shades in between:
-    if not (is_draw or chessEnded or isAIThink):
+    if not (is_draw or chessEnded or is_aiThink):
         for shade in list_of_shades:
             img,chess_coord = shade.getInfo()
             pixel_coord = chess_coord_to_pixels(chess_coord)
@@ -358,7 +336,7 @@ pygame.display.set_caption('Shallow Green')
 screen.blit(background,(0,0))
 
 #Generate a list of pieces that should be drawn on the board:
-listofWhitePieces,listofBlackPieces = createPieces(board)
+list_of_white_pieces,list_of_black_pieces = create_pieces(board)
 #(the list contains references to objects of the class Piece)
 #Initialize a list of shades:
 list_of_shades = []
@@ -374,7 +352,7 @@ chessEnded = False #Will become True once the chess game ends by checkmate, stal
 isRecord = False #Set this to True if you want to record moves to the Opening Book. Do not
 #set this to True unless you're 100% sure of what you're doing. The program will never modify
 #this value.
-isAIThink = False #Stores whether or not the AI is calculating the best move to be played.
+is_aiThink = False #Stores whether or not the AI is calculating the best move to be played.
 # Initialize the opening book dictionary, and set its values to be lists by default:
 openings = defaultdict(list)
 #If openingTable.txt exists, read from it and load the opening moves to the local dictionary.
@@ -396,9 +374,9 @@ ax,ay=0,0
 numm = 0
 #For showing the menu and keeping track of user choices:
 isMenu = True
-isAI = True
+is_ai = True
 isFlip = -1
-AIPlayer = -1
+ai_player = -1
 #Finally, a variable to keep false until the user wants to quit:
 gameEnded = False
 #########################INFINITE LOOP#####################################
@@ -409,18 +387,18 @@ while not gameEnded:
         #Menu needs to be shown right now.
         #Blit the background:
         screen.blit(background,(0,0))
-        if isAI==True:
+        if is_ai==True:
             screen.blit(playwhite_pic,(square_width*2,square_height*2))
         if isFlip!=-1:
             drawBoard()
             isMenu = False
-            if isAI and AIPlayer==0:
+            if is_ai and ai_player==0:
                 colorsign=1
                 bestMoveReturn = []
                 move_thread = threading.Thread(target = negamax,
                             args = (position,6,-1000000,1000000,colorsign,bestMoveReturn))
                 move_thread.start()
-                isAIThink = True
+                is_aiThink = True
             continue
         for event in pygame.event.get():
             if event.type==QUIT:
@@ -428,9 +406,9 @@ while not gameEnded:
                 break
             if event.type == MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
-                AIPlayer = 1
+                ai_player = 1
                 isFlip = False
-                isAI = True
+                is_ai = True
         pygame.display.update()
 #        clock.tick(60)
         continue
@@ -440,7 +418,7 @@ while not gameEnded:
     #that.
     #Do it every 6 frames so it's not too fast:
     numm+=1
-    if isAIThink and numm%6==0:
+    if is_aiThink and numm%6==0:
         ax+=1
         if ax==8:
             ay+=1
@@ -450,7 +428,7 @@ while not gameEnded:
         if ax%4==0:
             createShades([])
         #If the AI is white, start from the opposite side (since the board is flipped)
-        if AIPlayer==0:
+        if ai_player==0:
             list_of_shades.append(Shades.Shades(greenbox_image,(7-ax,7-ay)))
         else:
             list_of_shades.append(Shades.Shades(greenbox_image,(ax,ay)))
@@ -465,7 +443,7 @@ while not gameEnded:
             break
         #Under the following conditions, user input should be
         #completely ignored:
-        if chessEnded or isTransition or isAIThink:
+        if chessEnded or isTransition or is_aiThink:
             continue
         #isDown means a piece is being dragged.
         if not isDown and event.type == MOUSEBUTTONDOWN:
@@ -486,7 +464,7 @@ while not gameEnded:
             #Now we're sure the user is holding their mouse on a
             #piecec that is theirs.
             #Get reference to the piece that should be dragged around or selected:
-            dragPiece = getPiece(chess_coord)
+            dragPiece = get_piece(chess_coord)
             print(dragPiece)
             #Find the possible squares that this piece could attack:
             listofTuples = find_possible_squares(position,x,y)
@@ -581,7 +559,7 @@ while not gameEnded:
                 chessEnded = True
             #If the AI option was selecteed and the game still hasn't finished,
             #let the AI start thinking about its next move:
-            if isAI and not chessEnded:
+            if is_ai and not chessEnded:
                 if player==0:
                     colorsign = 1
                 else:
@@ -590,13 +568,13 @@ while not gameEnded:
                 move_thread = threading.Thread(target = negamax,
                             args = (position,3,-1000000,1000000,colorsign,bestMoveReturn))
                 move_thread.start()
-                isAIThink = True
+                is_aiThink = True
             #Move the piece to its new destination:
             dragPiece.setcoord((x2,y2))
             #There may have been a capture, so the piece list should be regenerated.
             #However, if animation is ocurring, the the captured piece should still remain visible.
             if not isTransition:
-                listofWhitePieces,listofBlackPieces = createPieces(board)
+                list_of_white_pieces,list_of_black_pieces = create_pieces(board)
             else:
                 movingPiece = dragPiece
                 origin = chess_coord_to_pixels((x,y))
@@ -616,7 +594,7 @@ while not gameEnded:
             #Snap it back to its grid position:
             movingPiece.setpos((-1,-1))
             #Generate new piece list in case one got captured:
-            listofWhitePieces,listofBlackPieces = createPieces(board)
+            list_of_white_pieces,list_of_black_pieces = create_pieces(board)
             #No more transitioning:
             isTransition = False
             createShades([])
@@ -631,11 +609,11 @@ while not gameEnded:
     #Also, if a piece is currently being animated don't ask the AI if it's
     #done thining, in case it replied in the affirmative and starts moving
     #at the same time as your piece is moving:
-    if isAIThink and not isTransition:
+    if is_aiThink and not isTransition:
         if not move_thread.isAlive():
             #The AI has made a decision.
             #It's no longer thinking
-            isAIThink = False
+            is_aiThink = False
             #Destroy any shades:
             createShades([])
             #Get the move proposed:
@@ -661,7 +639,7 @@ while not gameEnded:
                 chessEnded = True
             #Animate the movement:
             isTransition = True
-            movingPiece = getPiece((x,y))
+            movingPiece = get_piece((x,y))
             origin = chess_coord_to_pixels((x,y))
             destiny = chess_coord_to_pixels((x2,y2))
             movingPiece.setpos(origin)

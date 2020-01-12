@@ -39,16 +39,16 @@ def pixel_coord_to_chess(pixel_coord):
 #        return (x,y)
 #    else:
 #        return (7-x,7-y)
-def getPiece(chess_coord):
-    for piece in listofWhitePieces+listofBlackPieces:
+def get_piece(chess_coord):
+    for piece in list_of_white_pieces+list_of_black_pieces:
         #piece.getInfo()[0] represents the chess coordinate occupied
         #by piece.
         if piece.getInfo()[0] == chess_coord:
             return piece
-def createPieces(board):
+def create_pieces(board):
     #Initialize containers:
-    listofWhitePieces = []
-    listofBlackPieces = []
+    list_of_white_pieces = []
+    list_of_black_pieces = []
     #Loop through all squares:
     for i in range(8):
         for k in range(8):
@@ -58,11 +58,11 @@ def createPieces(board):
                 #Append the reference to the object to the appropriate
                 #list:
                 if board[i][k][1]=='w':
-                    listofWhitePieces.append(p)
+                    list_of_white_pieces.append(p)
                 else:
-                    listofBlackPieces.append(p)
+                    list_of_black_pieces.append(p)
     #Return both:
-    return [listofWhitePieces,listofBlackPieces]
+    return [list_of_white_pieces,list_of_black_pieces]
 def createShades(listofTuples):
     global listofShades
     #Empty the list
@@ -117,9 +117,9 @@ def drawBoard():
     #should be blitted first, so that when black is capturing,
     #the piece appears above:
     if player==1:
-        order = [listofWhitePieces,listofBlackPieces]
+        order = [list_of_white_pieces,list_of_black_pieces]
     else:
-        order = [listofBlackPieces,listofWhitePieces]
+        order = [list_of_black_pieces,list_of_white_pieces]
     if isTransition:
         #If a piece is being animated, the player info is changed despite
         #white still capturing over black, for example. Reverse the order:
