@@ -145,8 +145,8 @@ def drawchess_board():
             pixel_coord = chess_coord_to_pixels(chess_coord)
             screen.blit(img,pixel_coord)
     #Make shades to show what the previous move played was:
-    if prevMove[0]!=-1 and not is_transition:
-        x,y,x2,y2 = prevMove
+    if prev_move[0]!=-1 and not is_transition:
+        x,y,x2,y2 = prev_move
         screen.blit(yellowbox_image,chess_coord_to_pixels((x,y)))
         screen.blit(yellowbox_image,chess_coord_to_pixels((x2,y2)))
 
@@ -355,7 +355,7 @@ except:
 
 searched = {} #Global variable that allows negamax to keep track of nodes that have
 #already been evaluated.
-prevMove = [-1,-1,-1,-1] #Also a global varible that stores the last move played, to
+prev_move = [-1,-1,-1,-1] #Also a global varible that stores the last move played, to
 #allow drawchess_board() to create Shades on the squares.
 #Initialize some more values:
 #For animating AI thinking graphics:
@@ -382,10 +382,10 @@ while not game_ended:
             drawchess_board()
             is_menu = False
             if is_ai and ai_player==0:
-                colorsign=1
+                color_sign=1
                 best_move_return = []
                 move_thread = threading.Thread(target = negamax,
-                            args = (position,6,-1000000,1000000,colorsign,best_move_return))
+                            args = (position,6,-1000000,1000000,color_sign,best_move_return))
                 move_thread.start()
                 is_aiThink = True
             continue
@@ -489,42 +489,35 @@ while not game_ended:
 
             if isRecord:
                 key = pos_to_key(position)
-                #Make sure it isn't already in there:
                 if [(x,y),(x2,y2)] not in openings[key]:
                     openings[key].append([(x,y),(x2,y2)])
 
-            #Make the move:
             make_move(position,x,y,x2,y2)
-            #Update this move to be the 'previous' move (latest move in fact), so that
-            #yellow shades can be shown on it.
-            prevMove = [x,y,x2,y2]
-            #Update which player is next to play:
-            player = position.getplayer()
-            #Add the new position to the history for it:
-            position.addtoHistory(position)
-            #Check for possibilty of draw:
+            prev_move = [x,y,x2,y2]
+
+            player = position.get_player()
+            position.add_to_history(position)
+
             HMC = position.getHMC()
-            if HMC>=100 or is_stalemate(position) or position.checkRepition():
-                #There is a draw:
+            if HMC>=100 or is_stalemate(position) or position.check_repitition():
                 is_draw = True
                 chessEnded = True
-            #Check for possibilty of checkmate:
+
             if is_check_mate(position,'white'):
                 winner = 'b'
                 chessEnded = True
             if is_check_mate(position,'black'):
                 winner = 'w'
                 chessEnded = True
-            #If the AI option was selecteed and the game still hasn't finished,
-            #let the AI start thinking about its next move:
+
             if is_ai and not chessEnded:
                 if player==0:
-                    colorsign = 1
+                    color_sign = 1
                 else:
-                    colorsign = -1
+                    color_sign = -1
                 best_move_return = []
                 move_thread = threading.Thread(target = negamax,
-                            args = (position,3,-1000000,1000000,colorsign,best_move_return))
+                            args = (position,3,-1000000,1000000,color_sign,best_move_return))
                 move_thread.start()
                 is_aiThink = True
             #Move the piece to its new destination:
@@ -582,11 +575,11 @@ while not game_ended:
             x2,y2 = p2
             #Do everything just as if the user made a move by click-click movement:
             make_move(position,x,y,x2,y2)
-            prevMove = [x,y,x2,y2]
-            player = position.getplayer()
+            prev_move = [x,y,x2,y2]
+            player = position.get_player()
             HMC = position.getHMC()
-            position.addtoHistory(position)
-            if HMC>=100 or is_stalemate(position) or position.checkRepition():
+            position.add_to_history(position)
+            if HMC>=100 or is_stalemate(position) or position.check_repitition():
                 is_draw = True
                 chessEnded = True
             if is_check_mate(position,'white'):

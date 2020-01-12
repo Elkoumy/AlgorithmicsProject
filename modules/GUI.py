@@ -133,8 +133,8 @@ def drawchess_board():
             pixel_coord = chess_coord_to_pixels(chess_coord)
             screen.blit(img,pixel_coord)
     #Make shades to show what the previous move played was:
-    if prevMove[0]!=-1 and not is_transition:
-        x,y,x2,y2 = prevMove
+    if prev_move[0]!=-1 and not is_transition:
+        x,y,x2,y2 = prev_move
         screen.blit(yellowbox_image,chess_coord_to_pixels((x,y)))
         screen.blit(yellowbox_image,chess_coord_to_pixels((x2,y2)))
 

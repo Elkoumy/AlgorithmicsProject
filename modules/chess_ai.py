@@ -30,14 +30,14 @@ from modules.evaluation import *
 import time
 MaxAllowedTimeInSeconds = 30
 
-def negamax(curr_position,depth,alpha,beta,colorsign,best_move_return,root=True):
+def negamax(curr_position,depth,alpha,beta,color_sign,best_move_return,root=True):
     ''' generate possible_moves, decide the best move, and use opening table to reduce time.
 
     Args:
         curr_position: current place for chess piece.
         depth: the depth that search algorithm will look for the next move in.
         alpha and beta: lower and upper bounds to a curr_position's possible
-        colorsign: indicates the player to move.
+        color_sign: indicates the player to move.
         best_move_return: is a list that will be assigned the move to be played.
         root: s a variable that keeps track of whether the original node is processing now or a lower node.
 
@@ -59,12 +59,12 @@ def negamax(curr_position,depth,alpha,beta,colorsign,best_move_return,root=True)
     searched = {}
 
     if depth==0: #If the depth is zero, we are at a leaf node (no more depth to be analysed):
-        return colorsign*evaluate(curr_position)
+        return color_sign*evaluate(curr_position)
 
-    possible_moves = all_moves(curr_position, colorsign) #Generate all the possible_moves that can be played:
+    possible_moves = all_moves(curr_position, color_sign) #Generate all the possible_moves that can be played:
 
     if possible_moves==[]: #If there are no possible_moves to be played, just evaluate the curr_position and return it:
-        return colorsign*evaluate(curr_position)
+        return color_sign*evaluate(curr_position)
 
     if root: #Initialize a best move for the root node:
         best_move = possible_moves[0]
@@ -84,7 +84,7 @@ def negamax(curr_position,depth,alpha,beta,colorsign,best_move_return,root=True)
             print(depth)
             break
         else:
-            dict_value = -negamax(newpos,depth-1, -beta,-alpha,-colorsign,[],False)
+            dict_value = -negamax(newpos,depth-1, -beta,-alpha,-color_sign,[],False)
             searched[dict_key] = dict_value
 
         if dict_value>best_value: #If this move is better than the best so far:

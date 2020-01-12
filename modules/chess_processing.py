@@ -120,7 +120,7 @@ def is_stalemate(position):
     """
     This function checks if a particular position is a stalemate. If it is, it returns true, otherwise it returns false.
     """
-    player = position.getplayer()
+    player = position.get_player()
     if player == 0:
         color = 'w'
     else:
@@ -145,7 +145,7 @@ def get_all_pieces(position, color):
 
 def all_moves(position, color):
     """
-    This function takes as its argument a position and a color/colorsign that represents a side. It generates a list
+    This function takes as its argument a position and a color/color_sign that represents a side. It generates a list
     of all possible moves for that side and returns it.
     """
     if color == 1:
@@ -174,7 +174,7 @@ def pos_to_key(position):
     chess_board_tuple = tuple(chess_board_tuple)
     rights = position.getCastleRights()
     tuple_rights = (tuple(rights[0]), tuple(rights[1]))
-    key = (chess_board_tuple, position.getplayer(),
+    key = (chess_board_tuple, position.get_player(),
            tuple_rights)
     return key
 
@@ -188,7 +188,7 @@ def make_move(position, x, y, x2, y2):
     chess_board = position.getchess_board()
     piece = chess_board[y][x][0]
     color = chess_board[y][x][1]
-    player = position.getplayer()
+    player = position.get_player()
     castling_rights = position.getCastleRights()
     EnP_Target = position.getEnP()
     half_move_clock = position.getHMC()
@@ -262,7 +262,7 @@ def find_possible_squares(position, x, y, attack_search=False):
     '''
 
     chess_board = position.getchess_board()
-    player = position.getplayer()
+    player = position.get_player()
     castling_rights = position.getCastleRights()
     EnP_Target = position.getEnP()
 

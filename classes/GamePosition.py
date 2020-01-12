@@ -29,7 +29,7 @@ class GamePosition:
         return self.chess_board
     def setchess_board(self,chess_board):
         self.chess_board = chess_board
-    def getplayer(self):
+    def get_player(self):
         return self.player
     def setplayer(self,player):
         self.player = player
@@ -45,12 +45,12 @@ class GamePosition:
         return self.HMC
     def setHMC(self,HMC):
         self.HMC = HMC
-    def checkRepition(self):
+    def check_repitition(self):
         #Returns True if any of of the values in the history dictionary is greater than 3.
         #This would mean a position had been repeated at least thrice in order to reach the
         #current position in this game.
         return any(value>=3 for value in self.history.values())
-    def addtoHistory(self,position):
+    def add_to_history(self,position):
         #Generate a unique key out of the current position:
         key = pos_to_key(position)
         #Add it to the history dictionary.
