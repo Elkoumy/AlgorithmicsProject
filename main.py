@@ -59,9 +59,9 @@ def pixel_coord_to_chess(pixel_coord):
 
 def get_piece(chess_coord):
     for piece in list_of_white_pieces+list_of_black_pieces:
-        #piece.getInfo()[0] represents the chess coordinate occupied
+        #piece.get_info()[0] represents the chess coordinate occupied
         #by piece.
-        if piece.getInfo()[0] == chess_coord:
+        if piece.get_info()[0] == chess_coord:
             return piece
 def create_pieces(chess_board):
     list_of_white_pieces = []
@@ -141,7 +141,7 @@ def drawchess_board():
     if is_draw or chess_ended or is_aiThink:
         #Shades
         for shade in list_of_shades:
-            img,chess_coord = shade.getInfo()
+            img,chess_coord = shade.get_info()
             pixel_coord = chess_coord_to_pixels(chess_coord)
             screen.blit(img,pixel_coord)
     #Make shades to show what the previous move played was:
@@ -158,7 +158,7 @@ def drawchess_board():
     #Potentially captured pieces:
     for piece in order[0]:
 
-        chess_coord,subsection,pos = piece.getInfo()
+        chess_coord,subsection,pos = piece.get_info()
         pixel_coord = chess_coord_to_pixels(chess_coord)
         if pos==(-1,-1):
             #Blit to default square:
@@ -169,12 +169,12 @@ def drawchess_board():
     #Blit the shades in between:
     if not (is_draw or chess_ended or is_aiThink):
         for shade in list_of_shades:
-            img,chess_coord = shade.getInfo()
+            img,chess_coord = shade.get_info()
             pixel_coord = chess_coord_to_pixels(chess_coord)
             screen.blit(img,pixel_coord)
     #Potentially capturing pieces:
     for piece in order[1]:
-        chess_coord,subsection,pos = piece.getInfo()
+        chess_coord,subsection,pos = piece.get_info()
         pixel_coord = chess_coord_to_pixels(chess_coord)
         if pos==(-1,-1):
             #Default square
@@ -520,7 +520,7 @@ while not game_ended:
                             args = (position,3,-1000000,1000000,color_sign,best_move_return))
                 move_thread.start()
                 is_aiThink = True
-            drag_piece.setcoord((x2,y2))
+            drag_piece.set_coord((x2,y2))
             if not is_transition:
                 list_of_white_pieces,list_of_black_pieces = create_pieces(chess_board)
             else:

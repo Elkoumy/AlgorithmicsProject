@@ -9,7 +9,7 @@ class Shades:
     def __init__(self,image,coord):
         self.image = image
         self.pos = coord
-    def getInfo(self):
+    def get_info(self):
         return [self.image,self.pos]
 
         

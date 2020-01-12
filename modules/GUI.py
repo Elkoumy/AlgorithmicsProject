@@ -41,9 +41,9 @@ def pixel_coord_to_chess(pixel_coord):
 #        return (7-x,7-y)
 def get_piece(chess_coord):
     for piece in list_of_white_pieces+list_of_black_pieces:
-        #piece.getInfo()[0] represents the chess coordinate occupied
+        #piece.get_info()[0] represents the chess coordinate occupied
         #by piece.
-        if piece.getInfo()[0] == chess_coord:
+        if piece.get_info()[0] == chess_coord:
             return piece
 def create_pieces(chess_board):
     #Initialize containers:
@@ -129,7 +129,7 @@ def drawchess_board():
     if isDraw or chess_ended or isAIThink:
         #Shades
         for shade in listofShades:
-            img,chess_coord = shade.getInfo()
+            img,chess_coord = shade.get_info()
             pixel_coord = chess_coord_to_pixels(chess_coord)
             screen.blit(img,pixel_coord)
     #Make shades to show what the previous move played was:
@@ -146,7 +146,7 @@ def drawchess_board():
     #Potentially captured pieces:
     for piece in order[0]:
         
-        chess_coord,subsection,pos = piece.getInfo()
+        chess_coord,subsection,pos = piece.get_info()
         pixel_coord = chess_coord_to_pixels(chess_coord)
         if pos==(-1,-1):
             #Blit to default square:
@@ -157,12 +157,12 @@ def drawchess_board():
     #Blit the shades in between:
     if not (isDraw or chess_ended or isAIThink):
         for shade in listofShades:
-            img,chess_coord = shade.getInfo()
+            img,chess_coord = shade.get_info()
             pixel_coord = chess_coord_to_pixels(chess_coord)
             screen.blit(img,pixel_coord)
     #Potentially capturing pieces:
     for piece in order[1]:
-        chess_coord,subsection,pos = piece.getInfo()
+        chess_coord,subsection,pos = piece.get_info()
         pixel_coord = chess_coord_to_pixels(chess_coord)
         if pos==(-1,-1):
             #Default square

@@ -47,13 +47,13 @@ class Piece:
         self.pos = (-1,-1)
 
     #The methods are self explanatory:
-    def getInfo(self):
+    def get_info(self):
         return [self.chess_coord, self.subsection,self.pos]
     def set_pos(self,pos):
         self.pos = pos
     def get_pos(self):
         return self.pos
-    def setcoord(self,coord):
+    def set_coord(self,coord):
         self.chess_coord = coord
     def __repr__(self):
         #useful for debugging
