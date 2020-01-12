@@ -31,7 +31,7 @@ class GamePosition:
         self.chess_board = chess_board
     def get_player(self):
         return self.player
-    def setplayer(self,player):
+    def set_player(self,player):
         self.player = player
     def getCastleRights(self):
         return self.castling

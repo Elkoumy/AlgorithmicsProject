@@ -247,7 +247,7 @@ def make_move(position, x, y, x2, y2):
 
     player = 1 - player
 
-    position.setplayer(player)
+    position.set_player(player)
     position.setCastleRights(castling_rights)
     position.setEnP(EnP_Target)
     position.setHMC(half_move_clock)

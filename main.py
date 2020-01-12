@@ -338,7 +338,7 @@ is_clicked = False #To keep track of whether a piece was clicked in order
 is_transition = False #Keeps track of whether or not a piece is being animated.
 is_draw = False #Will store True if the game ended with a draw
 chess_ended = False #Will become True once the chess game ends by checkmate, stalemate, etc.
-isRecord = False #Set this to True if you want to record moves to the Opening Book. Do not
+is_record = False #Set this to True if you want to record moves to the Opening Book. Do not
 #set this to True unless you're 100% sure of what you're doing. The program will never modify
 #this value.
 is_aiThink = False #Stores whether or not the AI is calculating the best move to be played.
@@ -350,7 +350,7 @@ try:
     file_handle = open('openingTable.txt', 'r+')
     openings = pickle.loads(file_handle.read())
 except:
-    if isRecord:
+    if is_record:
         file_handle = open('openingTable.txt', 'w')
 
 searched = {} #Global variable that allows negamax to keep track of nodes that have
@@ -487,7 +487,7 @@ while not game_ended:
                 is_transition = False
                 continue
 
-            if isRecord:
+            if is_record:
                 key = pos_to_key(position)
                 if [(x,y),(x2,y2)] not in openings[key]:
                     openings[key].append([(x,y),(x2,y2)])
@@ -569,7 +569,6 @@ while not game_ended:
             if is_check_mate(position,'black'):
                 winner = 'w'
                 chess_ended = True
-            #Animate the movement:
             is_transition = True
             moving_piece = get_piece((x,y))
             origin = chess_coord_to_pixels((x,y))
@@ -577,18 +576,15 @@ while not game_ended:
             moving_piece.set_pos(origin)
             step = (destiny[0]-origin[0],destiny[1]-origin[1])
 
-    #Update positions of all images:
     drawchess_board()
-    #Update the display:
     pygame.display.update()
 
-    #Run at specific fps:
+
     clock.tick(60)
 
-#Out of loop. Quit pygame:
+
 pygame.quit()
-#In case recording mode was on, save the openings dictionary to a file:
-if isRecord:
+if is_record:
     file_handle.seek(0)
     pickle.dump(openings,file_handle)
     file_handle.truncate()
