@@ -75,7 +75,7 @@ def create_pieces(chess_board):
                 else:
                     list_of_black_pieces.append(p)
     return [list_of_white_pieces,list_of_black_pieces]
-def createShades(list_of_tuples):
+def create_shades(list_of_tuples):
     global list_of_shades
     #Empty the list
     list_of_shades = []
@@ -410,7 +410,7 @@ while not game_ended:
         if ay==8:
             ax,ay=0,0
         if ax%4==0:
-            createShades([])
+            create_shades([])
         if ai_player==0:
             list_of_shades.append(Shades.Shades(greenbox_image,(7-ax,7-ay)))
         else:
@@ -440,66 +440,55 @@ while not game_ended:
             print(drag_piece)
             list_of_tuples = find_possible_squares(position,x,y)
 
-            createShades(list_of_tuples)
+            create_shades(list_of_tuples)
 
             if ((drag_piece.pieceinfo[0]=='K') and
                 (is_check(position,'white') or is_check(position,'black'))):
                 None
             else:
                 list_of_shades.append(Shades.Shades(greenbox_image,(x,y)))
-            #A piece is being dragged:
             is_down = True
         if (is_down or is_clicked) and event.type == MOUSEBUTTONUP:
-            #Mouse was released.
             is_down = False
-            #Snap the piece back to its coordinate position
             drag_piece.setpos((-1,-1))
-            #Get coordinates and convert them:
             pos = pygame.mouse.get_pos()
             chess_coord = pixel_coord_to_chess(pos)
             chess_coord = (int(chess_coord[0]), int(chess_coord[1]))
             x2 = chess_coord[0]
             y2 = chess_coord[1]
-            #Initialize:
+
             is_transition = False
-            if (x,y)==(x2,y2): #NO dragging occured
-                #(ie the mouse was held and released on the same square)
-                if not is_clicked: #nothing had been clicked previously
-                    #This is the first click
+            if (x,y)==(x2,y2):
+
+                if not is_clicked:
+
                     is_clicked = True
-                    prevPos = (x,y) #Store it so next time we know the origin
-                else: #Something had been clicked previously
-                    #Find out location of previous click:
+                    prevPos = (x,y)
+                else:
+
                     x,y = prevPos
-                    if (x,y)==(x2,y2): #User clicked on the same square again.
-                        #So
+                    if (x,y)==(x2,y2):
+
                         is_clicked = False
-                        #Destroy all shades:
-                        createShades([])
+
+                        create_shades([])
                     else:
-                        #User clicked elsewhere on this second click:
                         if is_occupied_by(chess_board,x2,y2,'wb'[player]):
-                            #User clicked on a square that is occupied by their
-                            #own piece.
-                            #This is like making a first click on your own piece:
+
                             is_clicked = True
-                            prevPos = (x2,y2) #Store it
+                            prevPos = (x2,y2)
                         else:
-                            #The user may or may not have clicked on a valid target square.
                             is_clicked = False
-                            #Destory all shades
-                            createShades([])
-                            is_transition = True #Possibly if the move was valid.
+                            create_shades([])
+                            is_transition = True
 
 
             if not (x2,y2) in list_of_tuples:
-                #Move was invalid
                 is_transition = False
                 continue
-            #Reaching here means a valid move was selected.
-            #If the recording option was selected, store the move to the opening dictionary:
+
             if isRecord:
-                key = pos2key(position)
+                key = pos_to_key(position)
                 #Make sure it isn't already in there:
                 if [(x,y),(x2,y2)] not in openings[key]:
                     openings[key].append([(x,y),(x2,y2)])
@@ -552,7 +541,7 @@ while not game_ended:
                 step = (destiny[0]-origin[0],destiny[1]-origin[1])
 
             #Either way shades should be deleted now:
-            createShades([])
+            create_shades([])
     #If an animation is supposed to happen, make it happen:
     if is_transition:
         p,q = movingPiece.getpos()
@@ -566,7 +555,7 @@ while not game_ended:
             list_of_white_pieces,list_of_black_pieces = create_pieces(chess_board)
             #No more transitioning:
             is_transition = False
-            createShades([])
+            create_shades([])
         else:
             #Move it closer to its destination.
             movingPiece.setpos((p+step[0]/n,q+step[1]/n))
@@ -584,7 +573,7 @@ while not game_ended:
             #It's no longer thinking
             is_aiThink = False
             #Destroy any shades:
-            createShades([])
+            create_shades([])
             #Get the move proposed:
             #[x,y],[x2,y2] = best_move_return
             print(f"best_move_return: {best_move_return}")

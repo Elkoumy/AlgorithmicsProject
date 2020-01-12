@@ -63,7 +63,7 @@ def create_pieces(chess_board):
                     list_of_black_pieces.append(p)
     #Return both:
     return [list_of_white_pieces,list_of_black_pieces]
-def createShades(list_of_tuples):
+def create_shades(list_of_tuples):
     global listofShades
     #Empty the list
     listofShades = []
