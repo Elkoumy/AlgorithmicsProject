@@ -113,10 +113,10 @@ def evaluate(position):
     whiteMaterial = 9*Qw + 5*Rw + 3*Nw + 3*Bw + 1*Pw
     blackMaterial = 9*Qb + 5*Rb + 3*Nb + 3*Bb + 1*Pb
     '''
-    gethistory() from class gamePosition which is should be added
+    get_history() from class gamePosition which is should be added
     ??????????????????????????????????????????????????
     '''
-    numofmoves = len(position.gethistory())
+    numofmoves = len(position.get_history())
 
     gamephase = 'opening'
     if numofmoves>40 or (whiteMaterial<14 and blackMaterial<14):

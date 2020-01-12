@@ -33,17 +33,17 @@ class GamePosition:
         return self.player
     def set_player(self,player):
         self.player = player
-    def getCastleRights(self):
+    def get_castle_rights(self):
         return self.castling
-    def setCastleRights(self,castling_rights):
+    def set_castle_rights(self,castling_rights):
         self.castling = castling_rights
-    def getEnP(self):
+    def get_EnP(self):
         return self.EnP
-    def setEnP(self, EnP_Target):
+    def set_EnP(self, EnP_Target):
         self.EnP = EnP_Target
-    def getHMC(self):
+    def get_HMC(self):
         return self.HMC
-    def setHMC(self,HMC):
+    def set_HMC(self,HMC):
         self.HMC = HMC
     def check_repitition(self):
         #Returns True if any of of the values in the history dictionary is greater than 3.
@@ -55,7 +55,7 @@ class GamePosition:
         key = pos_to_key(position)
         #Add it to the history dictionary.
         self.history[key] = self.history.get(key,0) + 1
-    def gethistory(self):
+    def get_history(self):
         return self.history
     def clone(self):
         #This method returns another instance of the current object with exactly the same

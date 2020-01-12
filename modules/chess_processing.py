@@ -172,7 +172,7 @@ def pos_to_key(position):
     for row in chess_board:
         chess_board_tuple.append(tuple(row))
     chess_board_tuple = tuple(chess_board_tuple)
-    rights = position.getCastleRights()
+    rights = position.get_castle_rights()
     tuple_rights = (tuple(rights[0]), tuple(rights[1]))
     key = (chess_board_tuple, position.get_player(),
            tuple_rights)
@@ -189,9 +189,9 @@ def make_move(position, x, y, x2, y2):
     piece = chess_board[y][x][0]
     color = chess_board[y][x][1]
     player = position.get_player()
-    castling_rights = position.getCastleRights()
-    EnP_Target = position.getEnP()
-    half_move_clock = position.getHMC()
+    castling_rights = position.get_castle_rights()
+    EnP_Target = position.get_EnP()
+    half_move_clock = position.get_HMC()
     if is_occupied(chess_board, x2, y2) or piece == 'P':
         half_move_clock = 0
     else:
@@ -248,9 +248,9 @@ def make_move(position, x, y, x2, y2):
     player = 1 - player
 
     position.set_player(player)
-    position.setCastleRights(castling_rights)
-    position.setEnP(EnP_Target)
-    position.setHMC(half_move_clock)
+    position.set_castle_rights(castling_rights)
+    position.set_EnP(EnP_Target)
+    position.set_HMC(half_move_clock)
 
 
 def find_possible_squares(position, x, y, attack_search=False):
@@ -263,8 +263,8 @@ def find_possible_squares(position, x, y, attack_search=False):
 
     chess_board = position.getchess_board()
     player = position.get_player()
-    castling_rights = position.getCastleRights()
-    EnP_Target = position.getEnP()
+    castling_rights = position.get_castle_rights()
+    EnP_Target = position.get_EnP()
 
     if len(chess_board[y][x]) != 2:
         return []

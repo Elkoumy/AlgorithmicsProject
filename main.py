@@ -498,7 +498,7 @@ while not game_ended:
             player = position.get_player()
             position.add_to_history(position)
 
-            HMC = position.getHMC()
+            HMC = position.get_HMC()
             if HMC>=100 or is_stalemate(position) or position.check_repitition():
                 is_draw = True
                 chess_ended = True
@@ -558,7 +558,7 @@ while not game_ended:
             make_move(position,x,y,x2,y2)
             prev_move = [x,y,x2,y2]
             player = position.get_player()
-            HMC = position.getHMC()
+            HMC = position.get_HMC()
             position.add_to_history(position)
             if HMC>=100 or is_stalemate(position) or position.check_repitition():
                 is_draw = True
