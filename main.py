@@ -336,18 +336,18 @@ circle_image_yellow = pygame.transform.scale(circle_image_yellow,
                                              (square_width, square_height))
 circle_image_green_big = pygame.transform.scale(circle_image_green_big,
                                              (square_width, square_height))
-withfriend_pic = pygame.transform.scale(withfriend_pic,
-                                      (square_width*4,square_height*4))
+# withfriend_pic = pygame.transform.scale(withfriend_pic,
+#                                       (square_width*4,square_height*4))
 withAI_pic = pygame.transform.scale(withAI_pic,
                                       (square_width*4,square_height*4))
 playwhite_pic = pygame.transform.scale(playwhite_pic,
                                       (square_width*4,square_height*4))
 playblack_pic = pygame.transform.scale(playblack_pic,
                                       (square_width*4,square_height*4))
-flipEnabled_pic = pygame.transform.scale(flipEnabled_pic,
-                                      (square_width*4,square_height*4))
-flipDisabled_pic = pygame.transform.scale(flipDisabled_pic,
-                                      (square_width*4,square_height*4))
+# flipEnabled_pic = pygame.transform.scale(flipEnabled_pic,
+#                                       (square_width*4,square_height*4))
+# flipDisabled_pic = pygame.transform.scale(flipDisabled_pic,
+#                                       (square_width*4,square_height*4))
 
 
 

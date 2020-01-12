@@ -135,20 +135,19 @@ def evaluate(position):
     #both sides:
     Dw = doubledPawns(board,'white')
     Db = doubledPawns(board,'black')
-    Sw = blockedPawns(board,'white')
-    Sb = blockedPawns(board,'black')
-    Iw = isolatedPawns(board,'white')
-    Ib = isolatedPawns(board,'black')
+    Sw = blocked_pawns(board,'white')
+    Sb = blocked_pawns(board,'black')
+    Iw = isolated_pawns(board,'white')
+    Ib = isolated_pawns(board,'black')
     Adv_pawn_w =advanced_pawns(board,'white')
     Adv_pawn_b = advanced_pawns(board, 'black')
     bp=bishop_pair(board)
-    # ke= bishop_pair(board)
-    # print(ke)
-    #Evaluate position based on above data:
+
+    #Calculating the evaluation using the weights. The weights here are given by hand.
     evaluation1 = 900*(Qw - Qb) + 500*(Rw - Rb) +330*(Bw-Bb
                 )+320*(Nw - Nb) +100*(Pw - Pb) +-30*(Dw-Db + Sw-Sb + Iw- Ib
                 )+300*(Adv_pawn_w-Adv_pawn_b)+30*bp
-    #Evaluate position based on piece square tables:
+    #Evaluation of piece square tables:
     evaluation2 = pieceSquareTable(flatboard,gamephase)
     #Sum the evaluations:
     evaluation = evaluation1 + evaluation2
@@ -169,24 +168,19 @@ def pieceSquareTable(flatboard,gamephase):
         It returnes the score of the pieces.
     '''
 
-
-    #Initialize score:
     score = 0
-    #Go through each square:
+
     for i in range(64):
         if flatboard[i]==0:
-            #Empty square
             continue
-        #Get data:
+
         piece = flatboard[i][0]
-        color = flatboard[i][1]
+        colour = flatboard[i][1]
         sign = +1
-        #Adjust index if black piece, since piece sqaure tables
-        #were designed for white:
-        if color=='b':
+
+        if colour=='b':
             i = int((7-i/8)*8 + i%8)
             sign = -1
-        #Adjust score:
         if piece=='P':
             score += sign*pawn_table[i]
         elif piece=='N':
@@ -198,124 +192,103 @@ def pieceSquareTable(flatboard,gamephase):
         elif piece=='Q':
             score+=sign*queen_table[i]
         elif piece=='K':
-            #King has different table values based on phase
-            #of the game:
             if gamephase=='opening':
                 score+=sign*king_table[i]
             else:
                 score+=sign*king_endgame_table[i]
     return score
 
-
-
-# isolatedPawns(board,color) - This function counts the number of isolated pawns
-# for a player. These are pawns that do not have supporting pawns on adjacent files
-# and so are difficult to protect.
-#
-#
-
-
-
-
-def doubledPawns(board,color):
+def doubledPawns(board,colour):
     '''' This function counts the number of doubled pawns for a player and returns it.
     Doubled pawns are those that are on the same file.
 
     Args:
         board: current board state.
-        color:  white or black????
+        colour:  white or black????
 
     Returns:
         It returnes the number of doubled pawns.
     '''
 
-    color = color[0]
-    #Get indices of pawns:
-    listofpawns = look_for(board,'P'+color)
-    #Count the number of doubled pawns by counting occurences of
-    #repeats in their x-coordinates:
-    repeats = 0
+    colour = colour[0]
+
+    list_of_pawns = look_for(board,'P'+colour)
+    reps = 0
     temp = []
-    for pawnpos in listofpawns:
-        if pawnpos[0] in temp:
-            repeats = repeats + 1
+    for pawn_pos in list_of_pawns:
+        if pawn_pos[0] in temp:
+            reps = reps + 1
         else:
-            temp.append(pawnpos[0])
-    return repeats
+            temp.append(pawn_pos[0])
+    return reps
 
 
-def blockedPawns(board,color):
+def blocked_pawns(board,colour):
     '''' This function counts the number of blocked pawns for a player and returns it.
     Blocked pawns are those that have a piece in front of them and so cannot advance forward.
 
     Args:
         board: current board state.
-        color:  white or black????
+        colour:  white or black????
 
     Returns:
         It returnes the number of blocked pawns.
     '''
 
-    color = color[0]
-    listofpawns = look_for(board,'P'+color)
+    colour = colour[0]
+    list_of_pawns = look_for(board,'P'+colour)
     blocked = 0
-    #Self explanatory:
-    for pawnpos in listofpawns:
-        if ((color=='w' and is_occupied_by(board,pawnpos[0],pawnpos[1]-1,
+
+    for pawn_pos in list_of_pawns:
+        if ((colour=='w' and is_occupied_by(board,pawn_pos[0],pawn_pos[1]-1,
                                        'black'))
-            or (color=='b' and is_occupied_by(board,pawnpos[0],pawnpos[1]+1,
+            or (colour=='b' and is_occupied_by(board,pawn_pos[0],pawn_pos[1]+1,
                                        'white'))):
             blocked = blocked + 1
     return blocked
 
 
 
-def isolatedPawns(board,color):
+def isolated_pawns(board,colour):
     ''''  This function counts the number of isolated pawns for a player. These are pawns
     that do not have supporting pawns on adjacent files and so are difficult to protect.
 
     Args:
         board: current board state.
-        color:  white or black????
+        colour:  white or black????
 
     Returns:
         It returnes the number of isolated pawns.
     '''
 
-    color = color[0]
-    listofpawns = look_for(board,'P'+color)
-    #Get x coordinates of all the pawns:
-    xlist = [x for (x,y) in listofpawns]
+    colour = colour[0]
+    list_of_pawns = look_for(board,'P'+colour)
+    x_list = [x for (x,y) in list_of_pawns]
     isolated = 0
-    for x in xlist:
+    for x in x_list:
         if x!=0 and x!=7:
-            #For non-edge cases:
-            if x-1 not in xlist and x+1 not in xlist:
+
+            if x-1 not in x_list and x+1 not in x_list:
                 isolated+=1
-        elif x==0 and 1 not in xlist:
-            #Left edge:
+        elif x==0 and 1 not in x_list:
             isolated+=1
-        elif x==7 and 6 not in xlist:
-            #Right edge:
+        elif x==7 and 6 not in x_list:
+            
             isolated+=1
     return isolated
 
-def advanced_pawns(board,color):
-    # pawns closer to promotion are much better
+def advanced_pawns(board,colour):
     advanced_pawn_mul = 40
-
-    # pawns that are promotable are *very* good
     promotable_bonus = 350
-    #from Phantom.constants import grid_width
     score = 0
-    listofpawns = look_for(board, 'P' + color)
-    for piece in listofpawns:
-        if piece.color == 'white':
+    list_of_pawns = look_for(board, 'P' + colour)
+    for piece in list_of_pawns:
+        if piece.colour == 'white':
             if piece.y >= 4:
                 score += piece.y * advanced_pawn_mul
             if piece.is_promotable:
                 score += promotable_bonus
-        elif piece.color == 'black':
+        elif piece.colour == 'black':
             if piece.y <= 3:
                 score -= (8 - piece.y) * advanced_pawn_mul
             if piece.is_promotable:
@@ -323,25 +296,23 @@ def advanced_pawns(board,color):
     return score
 
 
-def knight_on_edge(board,color):
+def knight_on_edge(board,colour):
     knight_on_edge_score = -50
-    list_of_knights = look_for(board, 'N' + color)
-    #east_west_edges = board_east_edge + board_west_edge
-    return sum(knight_on_edge_score * (1 if p.color == 'white' else -1)
+    list_of_knights = look_for(board, 'N' + colour)
+    return sum(knight_on_edge_score * (1 if p.colour == 'white' else -1)
                for p in list_of_knights if p.col in 'ah')
 
-def get_pieces(board, color):
+def get_pieces(board, colour):
 
     """
-    This function returns a list of positions of all the pieces on the board of a particular color.
+    This function returns a list of positions of all the pieces on the board of a particular colour.
     """
     print('***********')
 
     list_of_pieces = []
     for j in range(8):
         for i in range(8):
-
-            if is_occupied_by(board, i, j, color):
+            if is_occupied_by(board, i, j, colour):
                 list_of_pieces.append(board[j][i][0])
     return list_of_pieces
 
