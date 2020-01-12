@@ -378,6 +378,7 @@ def find_possible_squares(position, x, y, attack_search=False):
         list_of_tuples = filter_by_color(board, list_of_tuples, color)
         if not attack_search:
             right = castling_rights[player]
+
             if (right[0] and
                     board[y][7] != 0 and
                     board[y][7][0] == 'R' and
