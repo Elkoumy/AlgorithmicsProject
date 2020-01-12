@@ -81,7 +81,7 @@ def create_shades(list_of_tuples):
         listofShades.append(shade)
         #There is no need to go further:
         return
-    if chessEnded:
+    if chess_ended:
         #The game has ended, with a checkmate because it cannot be a 
         #draw if the code reached here.
         #Give the winning king a green circle shade:
@@ -126,7 +126,7 @@ def drawchess_board():
         order = list(reversed(order))
     #The shades which appear during the following three conditions need to be
     #blitted first to appear under the pieces:
-    if isDraw or chessEnded or isAIThink:
+    if isDraw or chess_ended or isAIThink:
         #Shades
         for shade in listofShades:
             img,chess_coord = shade.getInfo()
@@ -155,7 +155,7 @@ def drawchess_board():
             #Blit to the specific coordinates:
             screen.blit(pieces_image,pos,subsection)
     #Blit the shades in between:
-    if not (isDraw or chessEnded or isAIThink):
+    if not (isDraw or chess_ended or isAIThink):
         for shade in listofShades:
             img,chess_coord = shade.getInfo()
             pixel_coord = chess_coord_to_pixels(chess_coord)

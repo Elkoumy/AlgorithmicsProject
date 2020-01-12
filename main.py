@@ -93,7 +93,7 @@ def create_shades(list_of_tuples):
         list_of_shades.append(shade)
         #There is no need to go further:
         return
-    if chessEnded:
+    if chess_ended:
         #The game has ended, with a checkmate because it cannot be a
         #draw if the code reached here.
         #Give the winning king a green circle shade:
@@ -138,7 +138,7 @@ def drawchess_board():
         order = list(reversed(order))
     #The shades which appear during the following three conditions need to be
     #blitted first to appear under the pieces:
-    if is_draw or chessEnded or is_aiThink:
+    if is_draw or chess_ended or is_aiThink:
         #Shades
         for shade in list_of_shades:
             img,chess_coord = shade.getInfo()
@@ -167,7 +167,7 @@ def drawchess_board():
             #Blit to the specific coordinates:
             screen.blit(pieces_image,pos,subsection)
     #Blit the shades in between:
-    if not (is_draw or chessEnded or is_aiThink):
+    if not (is_draw or chess_ended or is_aiThink):
         for shade in list_of_shades:
             img,chess_coord = shade.getInfo()
             pixel_coord = chess_coord_to_pixels(chess_coord)
@@ -337,7 +337,7 @@ is_clicked = False #To keep track of whether a piece was clicked in order
 #to indicate intention to move by the user.
 is_transition = False #Keeps track of whether or not a piece is being animated.
 is_draw = False #Will store True if the game ended with a draw
-chessEnded = False #Will become True once the chess game ends by checkmate, stalemate, etc.
+chess_ended = False #Will become True once the chess game ends by checkmate, stalemate, etc.
 isRecord = False #Set this to True if you want to record moves to the Opening Book. Do not
 #set this to True unless you're 100% sure of what you're doing. The program will never modify
 #this value.
@@ -422,7 +422,7 @@ while not game_ended:
             game_ended = True
 
             break
-        if chessEnded or is_transition or is_aiThink:
+        if chess_ended or is_transition or is_aiThink:
             continue
         if not is_down and event.type == MOUSEBUTTONDOWN:
 
@@ -501,16 +501,16 @@ while not game_ended:
             HMC = position.getHMC()
             if HMC>=100 or is_stalemate(position) or position.check_repitition():
                 is_draw = True
-                chessEnded = True
+                chess_ended = True
 
             if is_check_mate(position,'white'):
                 winner = 'b'
-                chessEnded = True
+                chess_ended = True
             if is_check_mate(position,'black'):
                 winner = 'w'
-                chessEnded = True
+                chess_ended = True
 
-            if is_ai and not chessEnded:
+            if is_ai and not chess_ended:
                 if player==0:
                     color_sign = 1
                 else:
@@ -520,30 +520,27 @@ while not game_ended:
                             args = (position,3,-1000000,1000000,color_sign,best_move_return))
                 move_thread.start()
                 is_aiThink = True
-            #Move the piece to its new destination:
             drag_piece.setcoord((x2,y2))
-            #There may have been a capture, so the piece list should be regenerated.
-            #However, if animation is ocurring, the the captured piece should still remain visible.
             if not is_transition:
                 list_of_white_pieces,list_of_black_pieces = create_pieces(chess_board)
             else:
-                movingPiece = drag_piece
+                moving_piece = drag_piece
                 origin = chess_coord_to_pixels((x,y))
                 destiny = chess_coord_to_pixels((x2,y2))
-                movingPiece.setpos(origin)
+                moving_piece.setpos(origin)
                 step = (destiny[0]-origin[0],destiny[1]-origin[1])
 
             #Either way shades should be deleted now:
             create_shades([])
     #If an animation is supposed to happen, make it happen:
     if is_transition:
-        p,q = movingPiece.getpos()
+        p,q = moving_piece.getpos()
         dx2,dy2 = destiny
         n= 30.0
         if abs(p-dx2)<=abs(step[0]/n) and abs(q-dy2)<=abs(step[1]/n):
             #The moving piece has reached its destination:
             #Snap it back to its grid position:
-            movingPiece.setpos((-1,-1))
+            moving_piece.setpos((-1,-1))
             #Generate new piece list in case one got captured:
             list_of_white_pieces,list_of_black_pieces = create_pieces(chess_board)
             #No more transitioning:
@@ -551,7 +548,7 @@ while not game_ended:
             create_shades([])
         else:
             #Move it closer to its destination.
-            movingPiece.setpos((p+step[0]/n,q+step[1]/n))
+            moving_piece.setpos((p+step[0]/n,q+step[1]/n))
     #If a piece is being dragged let the dragging piece follow the mouse:
     if is_down:
         m,k = pygame.mouse.get_pos()
@@ -581,19 +578,19 @@ while not game_ended:
             position.add_to_history(position)
             if HMC>=100 or is_stalemate(position) or position.check_repitition():
                 is_draw = True
-                chessEnded = True
+                chess_ended = True
             if is_check_mate(position,'white'):
                 winner = 'b'
-                chessEnded = True
+                chess_ended = True
             if is_check_mate(position,'black'):
                 winner = 'w'
-                chessEnded = True
+                chess_ended = True
             #Animate the movement:
             is_transition = True
-            movingPiece = get_piece((x,y))
+            moving_piece = get_piece((x,y))
             origin = chess_coord_to_pixels((x,y))
             destiny = chess_coord_to_pixels((x2,y2))
-            movingPiece.setpos(origin)
+            moving_piece.setpos(origin)
             step = (destiny[0]-origin[0],destiny[1]-origin[1])
 
     #Update positions of all images:
