@@ -98,21 +98,21 @@ def createPieces(board):
     #Return both:
     return [listofWhitePieces,listofBlackPieces]
 def createShades(listofTuples):
-    global listofShades
+    global list_of_shades
     #Empty the list
-    listofShades = []
+    list_of_shades = []
     if isTransition:
         #Nothing should be shaded when a piece is being animated:
         return
-    if isDraw:
+    if is_draw:
         #The game ended with a draw. Make yellow circle shades for
         #both the kings to show this is the case:
         coord = look_for(board,'Kw')[0]
         shade = Shades.Shades(circle_image_yellow,coord)
-        listofShades.append(shade)
+        list_of_shades.append(shade)
         coord = look_for(board,'Kb')[0]
         shade = Shades.Shades(circle_image_yellow,coord)
-        listofShades.append(shade)
+        list_of_shades.append(shade)
         #There is no need to go further:
         return
     if chessEnded:
@@ -121,16 +121,16 @@ def createShades(listofTuples):
         #Give the winning king a green circle shade:
         coord = look_for(board,'K'+winner)[0]
         shade = Shades.Shades(circle_image_green_big,coord)
-        listofShades.append(shade)
+        list_of_shades.append(shade)
     #If either king is under attack, give them a red circle:
     if is_check(position,'white'):
         coord = look_for(board,'Kw')[0]
         shade = Shades.Shades(circle_image_red,coord)
-        listofShades.append(shade)
+        list_of_shades.append(shade)
     if is_check(position,'black'):
         coord = look_for(board,'Kb')[0]
         shade = Shades.Shades(circle_image_red,coord)
-        listofShades.append(shade)
+        list_of_shades.append(shade)
     #Go through all the target squares inputted:
     for pos in listofTuples:
         #If the target square is occupied, it can be captured.
@@ -142,7 +142,7 @@ def createShades(listofTuples):
             img = circle_image_green
         shade = Shades.Shades(img,pos)
         #Append:
-        listofShades.append(shade)
+        list_of_shades.append(shade)
 def drawBoard():
     #Blit the background:
     screen.blit(background,(0,0))
@@ -160,9 +160,9 @@ def drawBoard():
         order = list(reversed(order))
     #The shades which appear during the following three conditions need to be
     #blitted first to appear under the pieces:
-    if isDraw or chessEnded or isAIThink:
+    if is_draw or chessEnded or isAIThink:
         #Shades
-        for shade in listofShades:
+        for shade in list_of_shades:
             img,chess_coord = shade.getInfo()
             pixel_coord = chess_coord_to_pixels(chess_coord)
             screen.blit(img,pixel_coord)
@@ -189,8 +189,8 @@ def drawBoard():
             #Blit to the specific coordinates:
             screen.blit(pieces_image,pos,subsection)
     #Blit the shades in between:
-    if not (isDraw or chessEnded or isAIThink):
-        for shade in listofShades:
+    if not (is_draw or chessEnded or isAIThink):
+        for shade in list_of_shades:
             img,chess_coord = shade.getInfo()
             pixel_coord = chess_coord_to_pixels(chess_coord)
             screen.blit(img,pixel_coord)
@@ -361,7 +361,7 @@ screen.blit(background,(0,0))
 listofWhitePieces,listofBlackPieces = createPieces(board)
 #(the list contains references to objects of the class Piece)
 #Initialize a list of shades:
-listofShades = []
+list_of_shades = []
 
 clock = pygame.time.Clock() #Helps controlling fps of the game.
 isDown = False #Variable that shows if the mouse is being held down
@@ -369,7 +369,7 @@ isDown = False #Variable that shows if the mouse is being held down
 isClicked = False #To keep track of whether a piece was clicked in order
 #to indicate intention to move by the user.
 isTransition = False #Keeps track of whether or not a piece is being animated.
-isDraw = False #Will store True if the game ended with a draw
+is_draw = False #Will store True if the game ended with a draw
 chessEnded = False #Will become True once the chess game ends by checkmate, stalemate, etc.
 isRecord = False #Set this to True if you want to record moves to the Opening Book. Do not
 #set this to True unless you're 100% sure of what you're doing. The program will never modify
@@ -451,9 +451,9 @@ while not gameEnded:
             createShades([])
         #If the AI is white, start from the opposite side (since the board is flipped)
         if AIPlayer==0:
-            listofShades.append(Shades.Shades(greenbox_image,(7-ax,7-ay)))
+            list_of_shades.append(Shades.Shades(greenbox_image,(7-ax,7-ay)))
         else:
-            listofShades.append(Shades.Shades(greenbox_image,(ax,ay)))
+            list_of_shades.append(Shades.Shades(greenbox_image,(ax,ay)))
 
     for event in pygame.event.get():
         #Deal with all the user inputs:
@@ -499,7 +499,7 @@ while not gameEnded:
                 (is_check(position,'white') or is_check(position,'black'))):
                 None
             else:
-                listofShades.append(Shades.Shades(greenbox_image,(x,y)))
+                list_of_shades.append(Shades.Shades(greenbox_image,(x,y)))
             #A piece is being dragged:
             isDown = True
         if (isDown or isClicked) and event.type == MOUSEBUTTONUP:
@@ -570,7 +570,7 @@ while not gameEnded:
             HMC = position.getHMC()
             if HMC>=100 or is_stalemate(position) or position.checkRepition():
                 #There is a draw:
-                isDraw = True
+                is_draw = True
                 chessEnded = True
             #Check for possibilty of checkmate:
             if is_check_mate(position,'white'):
@@ -651,7 +651,7 @@ while not gameEnded:
             HMC = position.getHMC()
             position.addtoHistory(position)
             if HMC>=100 or is_stalemate(position) or position.checkRepition():
-                isDraw = True
+                is_draw = True
                 chessEnded = True
             if is_check_mate(position,'white'):
                 winner = 'b'
