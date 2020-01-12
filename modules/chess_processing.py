@@ -320,7 +320,6 @@ def find_possible_squares(position, x, y, attack_search=False):
                         if is_occupied_by(board, kx, y, enemy_color):
                             list_of_tuples.append((kx, y))
                         break
-
                 else:
                     break
 
@@ -338,11 +337,7 @@ def find_possible_squares(position, x, y, attack_search=False):
                 else:
                     break
 
-    elif piece == 'N':  # The piece is a knight.
-        # The knight can jump across a board. It can jump either two or one
-        # squares in the x or y direction, but must jump the complimentary amount
-        # in the other. In other words, if it jumps 2 sqaures in the x direction,
-        # it must jump one square in the y direction and vice versa.
+    elif piece == 'N':
         for dx in [-2, -1, 1, 2]:
             if abs(dx) == 1:
                 sy = 2
@@ -350,86 +345,62 @@ def find_possible_squares(position, x, y, attack_search=False):
                 sy = 1
             for dy in [-sy, +sy]:
                 list_of_tuples.append((x + dx, y + dy))
-        # Filter the list of tuples so that only valid squares exist.
         list_of_tuples = filter_by_color(board, list_of_tuples, color)
-    elif piece == 'B':  # A bishop.
-        # A bishop moves diagonally. This means a change in x is accompanied by a
-        # change in y-coordiante when the piece moves. The changes are exactly the
-        # same in magnitude and direction.
-        for dx in [-1, 1]:  # Allow two directions in x.
-            for dy in [-1, 1]:  # Similarly, up and down for y.
-                kx = x  # These varibales store the coordinates of the square being
-                # observed.
+    elif piece == 'B':
+        for dx in [-1, 1]:
+            for dy in [-1, 1]:
+                kx = x
                 ky = y
-                while True:  # loop till broken.
-                    kx = kx + dx  # change x
-                    ky = ky + dy  # change y
+                while True:
+                    kx = kx + dx
+                    ky = ky + dy
                     if kx <= 7 and kx >= 0 and ky <= 7 and ky >= 0:
-                        # square is on the board
                         if not is_occupied(board, kx, ky):
-                            # The square is empty, so our bishop can go there.
                             list_of_tuples.append((kx, ky))
                         else:
-                            # The square is not empty. If it has a piece of the
-                            # enemy,our bishop can capture it:
                             if is_occupied_by(board, kx, ky, enemy_color):
                                 list_of_tuples.append((kx, ky))
-                            # Bishops cannot jump over other pieces so terminate
-                            # the search here:
                             break
                     else:
-                        # Square is not on board. Stop looking for more in this
-                        # direction:
                         break
 
-    elif piece == 'Q':  # A queen
-        # A queen's possible targets are the union of all targets that a rook and
-        # a bishop could have made from the same location
-        # Temporarily pretend there is a rook on the spot:
+    elif piece == 'Q':
         board[y][x] = 'R' + color
         list_rook = find_possible_squares(position, x, y, True)
-        # Temporarily pretend there is a bishop:
         board[y][x] = 'B' + color
         list_bishop = find_possible_squares(position, x, y, True)
-        # Merge the lists:
         list_of_tuples = list_rook + list_bishop
-        # Change the piece back to a queen:
         board[y][x] = 'Q' + color
-    elif piece == 'K':  # A king!
-        # A king can make one step in any direction:
+    elif piece == 'K':
         for dx in [-1, 0, 1]:
             for dy in [-1, 0, 1]:
                 list_of_tuples.append((x + dx, y + dy))
-        # Make sure the targets aren't our own piece or off-board:
         list_of_tuples = filter_by_color(board, list_of_tuples, color)
         if not attack_search:
-            # Kings can potentially castle:
             right = castling_rights[player]
-            # Kingside
-            if (right[0] and  # has right to castle
-                    board[y][7] != 0 and  # The rook square is not empty
-                    board[y][7][0] == 'R' and  # There is a rook at the appropriate place
-                    not is_occupied(board, x + 1, y) and  # The square on its right is empty
-                    not is_occupied(board, x + 2, y) and  # The second square beyond is also empty
-                    not is_attacked_by(position, x, y, enemy_color) and  # The king isn't under atack
-                    not is_attacked_by(position, x + 1, y, enemy_color) and  # Or the path through which
-                    not is_attacked_by(position, x + 2, y, enemy_color)):  # it will move
+            if (right[0] and
+                    board[y][7] != 0 and
+                    board[y][7][0] == 'R' and
+                    not is_occupied(board, x + 1, y) and
+                    not is_occupied(board, x + 2, y) and
+                    not is_attacked_by(position, x, y, enemy_color) and
+                    not is_attacked_by(position, x + 1, y, enemy_color) and
+                    not is_attacked_by(position, x + 2, y, enemy_color)):
                 list_of_tuples.append((x + 2, y))
-            # Queenside
-            if (right[1] and  # has right to castle
-                    board[y][0] != 0 and  # The rook square is not empty
-                    board[y][0][0] == 'R' and  # The rook square is not empty
-                    not is_occupied(board, x - 1, y) and  # The square on its left is empty
-                    not is_occupied(board, x - 2, y) and  # The second square beyond is also empty
-                    not is_occupied(board, x - 3, y) and  # And the one beyond.
-                    not is_attacked_by(position, x, y, enemy_color) and  # The king isn't under atack
-                    not is_attacked_by(position, x - 1, y, enemy_color) and  # Or the path through which
-                    not is_attacked_by(position, x - 2, y, enemy_color)):  # it will move
-                list_of_tuples.append((x - 2, y))  # Let castling be an option.
+
+            if (right[1] and
+                    board[y][0] != 0 and
+                    board[y][0][0] == 'R' and
+                    not is_occupied(board, x - 1, y) and
+                    not is_occupied(board, x - 2, y) and
+                    not is_occupied(board, x - 3, y) and
+                    not is_attacked_by(position, x, y, enemy_color) and
+                    not is_attacked_by(position, x - 1, y, enemy_color) and
+                    not is_attacked_by(position, x - 2, y, enemy_color)):
+                list_of_tuples.append((x - 2, y))
     """
     ******************* End of Pieces branching ********************
     """
-    # Make sure the king is not under attack as a result of this move:
     if not attack_search:
         new_list = []
         for tupleq in list_of_tuples:
