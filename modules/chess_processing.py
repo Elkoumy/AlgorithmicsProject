@@ -41,7 +41,7 @@ def filter_by_color(board, list_of_tuples, color):
         x = pos[0]
         y = pos[1]
         if x >= 0 and x <= 7 and y >= 0 and y <= 7 and not is_occupied_by(board, x, y, color):
-            # coordinates are on-board and no same-color piece is on the square.
+
             filtered_list.append(pos)
     return filtered_list
 
@@ -67,18 +67,14 @@ def is_attacked_by(position, target_x, target_y, color):
     specific colored set of pieces.
     '''
     board = position.getboard()
-    # Get b from black or w from white
     color = color[0]
-    # Get all the squares that are attacked by the particular side:
     list_of_attacked_squares = []
     for x in range(8):
         for y in range(8):
             if board[y][x] != 0 and board[y][x][1] == color:
                 list_of_attacked_squares.extend(
                     find_possible_squares(position, x, y, True))  # The true argument
-                # prevents infinite recursion.
-    # Check if the target square falls under the range of attack by the specified
-    # side, and return it:
+
     return (target_x, target_y) in list_of_attacked_squares
 
 
@@ -103,7 +99,6 @@ def is_check(position, color):
     color = color[0]
     enemy = opp(color)
     piece = 'K' + color
-    # Get the coordinates of the king:
     x, y = look_for(board, piece)[0]
     return is_attacked_by(position, x, y, enemy)
 
@@ -117,9 +112,7 @@ def is_check_mate(position, color=-1):
         return is_check_mate(position, 'white') or is_check_mate(position, 'b')
     color = color[0]
     if is_check(position, color) and all_moves(position, color) == []:
-        # The king is under attack, and there are no possible moves for this side to make:
         return True
-    # Either the king is not under attack or there are possible moves to be played:
     return False
 
 
@@ -128,14 +121,11 @@ def is_stalemate(position):
     This function checks if a particular position is a stalemate. If it is, it returns true, otherwise it returns false.
     """
     player = position.getplayer()
-    # Get color:
     if player == 0:
         color = 'w'
     else:
         color = 'b'
     if not is_check(position, color) and all_moves(position, color) == []:
-        # The player to move is not under check yet cannot make a move.
-        # It is a stalemate.
         return True
     return False
 
@@ -163,15 +153,11 @@ def all_moves(position, color):
     elif color == -1:
         color = 'black'
     color = color[0]
-    # Get all pieces controlled by this side:
     list_of_pieces = get_all_pieces(position, color)
     moves = []
-    # Loop through each piece:
     for pos in list_of_pieces:
-        # For each piece, find all the targets it can attack:
         targets = find_possible_squares(position, pos[0], pos[1])
         for target in targets:
-            # Save them all as possible moves:
             moves.append([pos, target])
     return moves
 
@@ -182,19 +168,14 @@ def pos_to_key(position):
     that can be used in a dictionary by making it hashable.
     """
     board = position.getboard()
-    # Convert the board into a tuple so it is hashable:
     board_tuple = []
     for row in board:
         board_tuple.append(tuple(row))
     board_tuple = tuple(board_tuple)
-    # Get castling rights:
     rights = position.getCastleRights()
-    # Convert to a tuple:
     tuple_rights = (tuple(rights[0]), tuple(rights[1]))
-    # Generate the key, which is a tuple that also takes into account the side to play:
     key = (board_tuple, position.getplayer(),
            tuple_rights)
-    # Return the key:
     return key
 
 
@@ -204,34 +185,25 @@ def make_move(position, x, y, x2, y2):
     coordinates of the piece to be moved, and (x2,y2) are coordinates of the destination. (x2,y2) being correct
     destination (ie the move  a valid one) is not checked for and is assumed to be the case.
     '''
-    # Get data from the position:
     board = position.getboard()
     piece = board[y][x][0]
     color = board[y][x][1]
-    # Get the individual game components:
     player = position.getplayer()
     castling_rights = position.getCastleRights()
     EnP_Target = position.getEnP()
     half_move_clock = position.getHMC()
-    # Update the half move clock:
     if is_occupied(board, x2, y2) or piece == 'P':
-        # Either a capture was made or a pawn has moved:
         half_move_clock = 0
     else:
-        # An irreversible move was played:
         half_move_clock += 1
 
-    # Make the move:
     board[y2][x2] = board[y][x]
     board[y][x] = 0
 
-    # Special piece requirements:
-    # King:
+
     if piece == 'K':
-        # Ensure that since a King is moved, the castling
-        # rights are lost:
+
         castling_rights[player] = [False, False]
-        # If castling occured, place the rook at the appropriate location:
         if abs(x2 - x) == 2:
             if color == 'w':
                 l = 7
@@ -244,51 +216,37 @@ def make_move(position, x, y, x2, y2):
             else:
                 board[l][3] = 'R' + color
                 board[l][0] = 0
-    # Rook:
+
     if piece == 'R':
-        # The rook moved. Castling right for this rook must be removed.
         if x == 0 and y == 0:
-            # Black queenside
             castling_rights[1][1] = False
         elif x == 7 and y == 0:
-            # Black kingside
             castling_rights[1][0] = False
         elif x == 0 and y == 7:
-            # White queenside
             castling_rights[0][1] = False
         elif x == 7 and y == 7:
-            # White kingside
             castling_rights[0][0] = False
-    # Pawn:
+
     if piece == 'P':
-        # If an en passant kill was made, the target enemy must die:
         if EnP_Target == (x2, y2):
             if color == 'w':
                 board[y2 + 1][x2] = 0
             else:
                 board[y2 - 1][x2] = 0
-        # If a pawn moved two steps, there is a potential en passant
-        # target. Otherise, there isn't. Update the variable:
         if abs(y2 - y) == 2:
             EnP_Target = (x, (y + y2) / 2)
         else:
             EnP_Target = -1
-        # If a pawn moves towards the end of the board, it needs to
-        # be promoted. Note that in this game a pawn is being promoted
-        # to a queen regardless of user choice.
+
         if y2 == 0:
             board[y2][x2] = 'Qw'
         elif y2 == 7:
             board[y2][x2] = 'Qb'
     else:
-        # If a pawn did not move, the en passsant target is gone as well,
-        # since a turn has passed:
         EnP_Target = -1
 
-    # Since a move has been made, the other player
-    # should be the 'side to move'
     player = 1 - player
-    # Update the position data:
+
     position.setplayer(player)
     position.setCastleRights(castling_rights)
     position.setEnP(EnP_Target)
@@ -302,19 +260,18 @@ def find_possible_squares(position, x, y, attack_search=False):
     and excluding illegal moves (eg moves that leave a king under check). attack_search is an argument used to
     ensure infinite recursions do not occur.
     '''
-    # Get individual component data from the position object:
+
     board = position.getboard()
     player = position.getplayer()
     castling_rights = position.getCastleRights()
     EnP_Target = position.getEnP()
-    # In case something goes wrong:
-    if len(board[y][x]) != 2:  # Unexpected, return empty list.
+
+    if len(board[y][x]) != 2:
         return []
-    piece = board[y][x][0]  # Pawn, rook, etc.
-    color = board[y][x][1]  # w or b.
-    # Have the complimentary color stored for convenience:
+    piece = board[y][x][0]
+    color = board[y][x][1]
     enemy_color = opp(color)
-    list_of_tuples = []  # Holds list of attacked squares.
+    list_of_tuples = []
 
     """
     *************************************************
@@ -322,31 +279,23 @@ def find_possible_squares(position, x, y, attack_search=False):
     *************************************************
     """
 
-    if piece == 'P':  # The piece is a pawn.
-        if color == 'w':  # The piece is white
+    if piece == 'P':
+        if color == 'w':
             if not is_occupied(board, x, y - 1) and not attack_search:
-                # The piece immediately above is not occupied, append it.
                 list_of_tuples.append((x, y - 1))
 
                 if y == 6 and not is_occupied(board, x, y - 2):
-                    # If pawn is at its initial position, it can move two squares.
                     list_of_tuples.append((x, y - 2))
 
             if x != 0 and is_occupied_by(board, x - 1, y - 1, 'black'):
-                # The piece diagonally up and left of this pawn is a black piece.
-                # Also, this is not an 'a' file pawn (left edge pawn)
                 list_of_tuples.append((x - 1, y - 1))
             if x != 7 and is_occupied_by(board, x + 1, y - 1, 'black'):
-                # The piece diagonally up and right of this pawn is a black one.
-                # Also, this is not an 'h' file pawn.
                 list_of_tuples.append((x + 1, y - 1))
-            if EnP_Target != -1:  # There is a possible en pasant target:
+            if EnP_Target != -1:
                 if EnP_Target == (x - 1, y - 1) or EnP_Target == (x + 1, y - 1):
-                    # We're at the correct location to potentially perform en
-                    # passant:
                     list_of_tuples.append(EnP_Target)
 
-        elif color == 'b':  # The piece is black, same as above but opposite side.
+        elif color == 'b':
             if not is_occupied(board, x, y + 1) and not attack_search:
                 list_of_tuples.append((x, y + 1))
                 if y == 1 and not is_occupied(board, x, y + 2):
@@ -358,33 +307,23 @@ def find_possible_squares(position, x, y, attack_search=False):
             if EnP_Target == (x - 1, y + 1) or EnP_Target == (x + 1, y + 1):
                 list_of_tuples.append(EnP_Target)
 
-    elif piece == 'R':  # The piece is a rook.
-        # Get all the horizontal squares:
+    elif piece == 'R':
         for i in [-1, 1]:
-            # i is -1 then +1. This allows for searching right and left.
-            kx = x  # This variable stores the x coordinate being looked at.
-            while True:  # loop till break.
-                kx = kx + i  # Searching left or right
-                if kx <= 7 and kx >= 0:  # Making sure we're still in board.
+            kx = x
+            while True:
+                kx = kx + i
+                if kx <= 7 and kx >= 0:
 
                     if not is_occupied(board, kx, y):
-                        # The square being looked at it empty. Our rook can move
-                        # here.
                         list_of_tuples.append((kx, y))
                     else:
-                        # The sqaure being looked at is occupied. If an enemy
-                        # piece is occupying it, it can be captured so its a valid
-                        # move.
                         if is_occupied_by(board, kx, y, enemy_color):
                             list_of_tuples.append((kx, y))
-                        # Regardless of the occupying piece color, the rook cannot
-                        # jump over. No point continuing search beyond in this
-                        # direction:
                         break
 
-                else:  # We have exceeded the limits of the board
+                else:
                     break
-        # Now using the same method, get the vertical squares:
+
         for i in [-1, 1]:
             ky = y
             while True:
