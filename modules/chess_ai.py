@@ -1,32 +1,17 @@
 '''
 In this file, we are going to implement the chess ai functions.
-Kamel
+Nesma
 2/1/2020
 '''
 
 from classes import *
 from collections import Counter #For counting elements in a list effieciently.
-
-#from modules import chess_processing
-
-
-# all_moves()
-#import all_moves from Gamal's code
 from modules.chess_processing import all_moves
-
-# make_move()
-# import make_move from Gamal's code
 from modules.chess_processing import make_move
 from modules.chess_processing import *
-
-#pos_to_key()
-#import pos_to_key from Gamal's code
 from modules.chess_processing import pos_to_key
 from collections import defaultdict #Used for giving dictionary values default data types.
 from modules.evaluation import *
-# is_check_mate()
-# import isCheckmate from Gamal's code
-#from modules.chess_processing import is_check_mate as isCheckmate
 import time
 MaxAllowedTimeInSeconds = 30
 

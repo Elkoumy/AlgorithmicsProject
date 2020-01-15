@@ -1,14 +1,8 @@
 from classes import *
 from modules import chess_ai, chess_processing, GUI
-
-
-
 from classes.GamePosition import GamePosition
 from classes.Piece import Piece
 from classes.Shades import Shades
-#from classes import GamePosition
-
-#Import dependencies:
 import pygame #Game library
 from pygame.locals import * #For useful variables
 import copy #Library used to make exact copies of lists.
@@ -18,25 +12,8 @@ from collections import defaultdict #Used for giving dictionary values default d
 from collections import Counter #For counting elements in a list effieciently.
 import threading #To allow for AI to think simultaneously while the GUI is coloring the chess_board.
 import os #To allow path joining with cross-platform support
-
-
-# make_move()
-# import make_move from Gamal's code
-#from modules.chess_processing import make_move as makemove
-
-#pos_to_key()
-# import pos_to_key from Gamal's code
-#from modules.chess_processing import pos_to_key as pos2key
-
-# is_check_mate()
-# import is_check_mate from Gamal's code
-#from modules.chess_processing import is_check_mate as is_check_mate
-
 from modules.chess_processing import *
 from modules.chess_ai import *
-
-
-
 
 ##############################////////GUI FUNCTIONS\\\\\\\\\\\\\#############################
 def chess_coord_to_pixels(chess_coord):
@@ -119,7 +96,6 @@ def create_shades(list_of_tuples):
         else:
             img = circle_image_green
         shade = Shades.Shades(img,pos)
-        #Append:
         list_of_shades.append(shade)
 def drawchess_board():
     #Blit the background:
@@ -285,9 +261,7 @@ circle_image_yellow = pygame.image.load(os.path.join('Media', 'yellow_circle_big
 circle_image_green_big = pygame.image.load(os.path.join('Media', 'green_circle_big.png')).convert_alpha()
 yellowbox_image = pygame.image.load(os.path.join('Media', 'yellow_box.png')).convert_alpha()
 #Menu pictures:
-withAI_pic = pygame.image.load(os.path.join('Media', 'withAI.png')).convert_alpha()
 playwhite_pic = pygame.image.load(os.path.join('Media', 'start.png')).convert_alpha()
-playblack_pic = pygame.image.load(os.path.join('Media', 'playBlack.png')).convert_alpha()
 
 size_of_bg = background.get_rect().size
 
@@ -313,11 +287,7 @@ circle_image_yellow = pygame.transform.scale(circle_image_yellow,
 circle_image_green_big = pygame.transform.scale(circle_image_green_big,
                                              (square_width, square_height))
 
-withAI_pic = pygame.transform.scale(withAI_pic,
-                                      (square_width*4,square_height*4))
 playwhite_pic = pygame.transform.scale(playwhite_pic,
-                                      (square_width*4,square_height*4))
-playblack_pic = pygame.transform.scale(playblack_pic,
                                       (square_width*4,square_height*4))
 
 
@@ -517,7 +487,7 @@ while not game_ended:
                     color_sign = -1
                 best_move_return = []
                 move_thread = threading.Thread(target = negamax,
-                            args = (position,3,-1000000,1000000,color_sign,best_move_return))
+                            args = (position,6,-1000000,1000000,color_sign,best_move_return))
                 move_thread.start()
                 is_aiThink = True
             drag_piece.set_coord((x2,y2))
