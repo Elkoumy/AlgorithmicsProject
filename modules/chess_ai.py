@@ -48,7 +48,7 @@ def negamax(curr_position,depth,alpha,beta,color_sign,best_move_return,root=True
 
     possible_moves = all_moves(curr_position, color_sign) #Generate all the possible_moves that can be played:
 
-    if possible_moves==[]: #If there are no possible_moves to be played, just evaluate the curr_position and return it:
+    if not possible_moves: #If there are no possible_moves to be played, just evaluate the curr_position and return it:
         return color_sign*evaluate(curr_position)
 
     if root: #Initialize a best move for the root node:
@@ -65,14 +65,14 @@ def negamax(curr_position,depth,alpha,beta,color_sign,best_move_return,root=True
             dict_value = searched[dict_key]
             print("Exist")
         elif time.time() - startTime > MaxAllowedTimeInSeconds: 
-            print("Time Limit")
+            print("Time Limit of iterative deepining")
             print(depth)
             break
         else:
             dict_value = -negamax(newpos,depth-1, -beta,-alpha,-color_sign,[],False)
             searched[dict_key] = dict_value
 
-        if dict_value>best_value: #If this move is better than the best so far:
+        if dict_value > best_value: #If this move is better than the best so far:
             best_value = dict_value
             if root: #If we're at root node, store the move as the best move:
                 best_move = move
