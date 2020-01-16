@@ -1,25 +1,39 @@
-from classes.chessPosition import chessPosition
-from classes.imageDisplay import imageDispaly
-from classes.pieceDisplay import pieceDisplay
-import pygame #Game library
-from pygame.locals import * #For useful variables
-import pickle #Library used to store dictionaries in a text file and read them from text files.
-
-import threading #To allow for AI to think simultaneously while the GUI is coloring the chess_board.
-import os #To allow path joining with cross-platform support
+# game lib python
+import pygame
+from pygame.locals import *
+import pickle
+import threading
+import os
 from modules.chess_ai import *
 
-##############################////////GUI FUNCTIONS\\\\\\\\\\\\\#############################
-def chess_coord_to_pixels(chess_coord):
-    x,y = chess_coord
+##############################################################
+###################### GUI ##################################
+#############################################################
+def coordinate_to_pixel(chess_coord):
+    """
 
+    Args:
+        chess_coord: x, and y axis
+
+    Returns: this function returns the pixel values for any x,y coordinates.
+
+    """
+    x,y = chess_coord
     if is_ai:
         if ai_player==0:
             return ((7-x)*square_width, (7-y)*square_height)
         else:
             return (x*square_width, y*square_height)
 
-def pixel_coord_to_chess(pixel_coord):
+def pixel_to_coordinate(pixel_coord):
+    """
+
+    Args:
+        pixel_coord: pixel values for any square
+
+    Returns: this function returns x,y coordinates
+
+    """
     x,y = pixel_coord[0]/square_width, pixel_coord[1]/square_height
 
     if is_ai:
@@ -29,12 +43,27 @@ def pixel_coord_to_chess(pixel_coord):
             return (x,y)
 
 def get_piece(chess_coord):
+    """
+    Args:
+        chess_coord: state of the board
+
+    Returns:
+
+    """
     for piece in list_of_white_pieces+list_of_black_pieces:
-        #piece.get_info()[0] represents the chess coordinate occupied
-        #by piece.
         if piece.get_info()[0] == chess_coord:
             return piece
-def create_pieces(chess_board):
+
+
+def generate_piece(chess_board):
+    """
+
+    Args:
+        chess_board: state of the board
+
+    Returns: this function returns a list of white and black pieces.
+
+    """
     list_of_white_pieces = []
     list_of_black_pieces = []
     for i in range(8):
@@ -46,139 +75,120 @@ def create_pieces(chess_board):
                 else:
                     list_of_black_pieces.append(p)
     return [list_of_white_pieces,list_of_black_pieces]
-def create_shades(list_of_tuples):
+
+def create_piece_display(list_of_tuples):
+    """
+
+    Args:
+        list_of_tuples: tuples of pices square
+
+    Returns: this function shade list of tuples
+
+    """
     global list_of_shades
-    #Empty the list
     list_of_shades = []
     if is_transition:
-        #Nothing should be shaded when a piece is being animated:
         return
     if is_draw:
-        #The game ended with a draw. Make yellow circle shades for
-        #both the kings to show this is the case:
+
         coord = look_for(chess_board,'Kw')[0]
         shade = imageDispaly(circle_image_yellow,coord)
         list_of_shades.append(shade)
         coord = look_for(chess_board,'Kb')[0]
         shade = imageDispaly(circle_image_yellow,coord)
         list_of_shades.append(shade)
-        #There is no need to go further:
         return
-    if chess_ended:
-        #The game has ended, with a checkmate because it cannot be a
-        #draw if the code reached here.
-        #Give the winning king a green circle shade:
+
+    if end_game:
         coord = look_for(chess_board,'K'+winner)[0]
         shade = imageDispaly(circle_image_green_big,coord)
         list_of_shades.append(shade)
-    #If either king is under attack, give them a red circle:
+
     if is_check(position,'white'):
         coord = look_for(chess_board,'Kw')[0]
         shade = imageDispaly(circle_image_red,coord)
         list_of_shades.append(shade)
+
     if is_check(position,'black'):
         coord = look_for(chess_board,'Kb')[0]
         shade = imageDispaly(circle_image_red,coord)
         list_of_shades.append(shade)
-    #Go through all the target squares inputted:
+
     for pos in list_of_tuples:
-        #If the target square is occupied, it can be captured.
-        #For a capturable square, there is a different shade.
-        #Create the appropriate shade for each target square:
         if is_occupied(chess_board,pos[0],pos[1]):
             img = circle_image_capture
         else:
             img = circle_image_green
         shade = imageDispaly(img,pos)
         list_of_shades.append(shade)
-def drawchess_board():
-    #Blit the background:
+
+def plot_chess_game():
+    #create background
     screen.blit(background,(0,0))
-    #Choose the order in which to blit the pieces.
-    #If black is about to play for example, white pieces
-    #should be blitted first, so that when black is capturing,
-    #the piece appears above:
+    # who is should play
     if player==1:
         order = [list_of_white_pieces,list_of_black_pieces]
     else:
         order = [list_of_black_pieces,list_of_white_pieces]
     if is_transition:
-        #If a piece is being animated, the player info is changed despite
-        #white still capturing over black, for example. Reverse the order:
+
         order = list(reversed(order))
-    #The shades which appear during the following three conditions need to be
-    #blitted first to appear under the pieces:
-    if is_draw or chess_ended or is_aiThink:
-        #Shades
+
+    if is_draw or end_game or is_aiThink:
+        #pieceDisplay
         for shade in list_of_shades:
             img,chess_coord = shade.get_info()
-            pixel_coord = chess_coord_to_pixels(chess_coord)
+            pixel_coord = coordinate_to_pixel(chess_coord)
             screen.blit(img,pixel_coord)
-    #Make shades to show what the previous move played was:
     if prev_move[0]!=-1 and not is_transition:
         x,y,x2,y2 = prev_move
-        screen.blit(yellowbox_image,chess_coord_to_pixels((x,y)))
-        screen.blit(yellowbox_image,chess_coord_to_pixels((x2,y2)))
+        screen.blit(yellowbox_image,coordinate_to_pixel((x,y)))
+        screen.blit(yellowbox_image,coordinate_to_pixel((x2,y2)))
 
-    #Blit the Pieces:
-    #Notw that one side has to be below the green circular shades to show
-    #that they are being targeted, and the other side if dragged to such
-    # a square should be blitted on top to show that it is capturing:
-
-    #Potentially captured pieces:
     for piece in order[0]:
 
         chess_coord,subsection,pos = piece.get_info()
-        pixel_coord = chess_coord_to_pixels(chess_coord)
+        pixel_coord = coordinate_to_pixel(chess_coord)
         if pos==(-1,-1):
-            #Blit to default square:
             screen.blit(pieces_image,pixel_coord,subsection)
         else:
-            #Blit to the specific coordinates:
             screen.blit(pieces_image,pos,subsection)
-    #Blit the shades in between:
-    if not (is_draw or chess_ended or is_aiThink):
+    if not (is_draw or end_game or is_aiThink):
         for shade in list_of_shades:
             img,chess_coord = shade.get_info()
-            pixel_coord = chess_coord_to_pixels(chess_coord)
+            pixel_coord = coordinate_to_pixel(chess_coord)
             screen.blit(img,pixel_coord)
-    #Potentially capturing pieces:
     for piece in order[1]:
         chess_coord,subsection,pos = piece.get_info()
-        pixel_coord = chess_coord_to_pixels(chess_coord)
+        pixel_coord = coordinate_to_pixel(chess_coord)
         if pos==(-1,-1):
-            #Default square
             screen.blit(pieces_image,pixel_coord,subsection)
         else:
-            #Specifc pixels:
             screen.blit(pieces_image,pos,subsection)
 
 
+#******************************************************************#
+#******************    Start Main    ******************************
+#******************************************************************#
 
-#########MAIN FUNCTION####################################################
-#Initialize the chess_board:
-chess_board = [ ['Rb', 'Nb', 'Bb', 'Qb', 'Kb', 'Bb', 'Nb', 'Rb'], #8
-          ['Pb', 'Pb', 'Pb', 'Pb', 'Pb', 'Pb', 'Pb', 'Pb'], #7
-          [  0,    0,    0,    0,    0,    0,    0,    0],  #6
-          [  0,    0,    0,    0,    0,    0,    0,    0],  #5
-          [  0,    0,    0,    0,    0,    0,    0,    0],  #4
-          [  0,    0,    0,    0,    0,    0,    0,    0],  #3
-          ['Pw', 'Pw', 'Pw',  'Pw', 'Pw', 'Pw', 'Pw', 'Pw'], #2
-          ['Rw', 'Nw', 'Bw',  'Qw', 'Kw', 'Bw', 'Nw', 'Rw'] ]#1
-          # a      b     c     d     e     f     g     h
+# chess game init
+chess_board = [ ['Rb', 'Nb', 'Bb', 'Qb', 'Kb', 'Bb', 'Nb', 'Rb'],#8
+          ['Pb', 'Pb', 'Pb', 'Pb', 'Pb', 'Pb', 'Pb', 'Pb'],      #7
+          [0,    0,    0,    0,    0,    0,    0,    0],         #6
+          [0,    0,    0,    0,    0,    0,    0,    0],         #5
+          [0,    0,    0,    0,    0,    0,    0,    0],         #4
+          [0,    0,    0,    0,    0,    0,    0,    0],         #3
+          ['Pw', 'Pw', 'Pw',  'Pw', 'Pw', 'Pw', 'Pw', 'Pw'],     #2
+          ['Rw', 'Nw', 'Bw',  'Qw', 'Kw', 'Bw', 'Nw', 'Rw'] ]    #1
+           # a      b     c     d     e     f     g     h
 
-#In chess some data must be stored that is not apparent in the chess_board:
-player = 0 #This is the player that makes the next move. 0 is white, 1 is black
+
+# next move 0 for white, 1 for black
+player = 0
 castling_rights = [[True, True],[True, True]]
-#The above stores whether or not each of the players are permitted to castle on
-#either side of the king. (Kingside, Queenside)
-En_Passant_Target = -1 #This variable will store a coordinate if there is a square that can be
-                       #en passant captured on. Otherwise it stores -1, indicating lack of en passant
-                       #targets.
-half_move_clock = 0 #This variable stores the number of reversible moves that have been played so far.
-#Generate an instance of chessPosition class to store the above data:
+En_Passant_Target = -1
+half_move_clock = 0
 position = chessPosition(chess_board, player, castling_rights, En_Passant_Target, half_move_clock)
-#Store the piece square tables here so they can be accessed globally by pieceSquareTable() function:
 pawn_table = [  0,  0,  0,  0,  0,  0,  0,  0,
 50, 50, 50, 50, 50, 50, 50, 50,
 10, 10, 20, 30, 30, 20, 10, 10,
@@ -236,29 +246,23 @@ king_endgame_table = [-50,-40,-30,-20,-20,-30,-40,-50,
 -30,-30,  0,  0,  0,  0,-30,-30,
 -50,-30,-30,-30,-30,-30,-30,-50]
 
-#Make the GUI:
-#Start pygame
+#init pygame
 pygame.init()
 #Load the screen with any arbitrary size for now:
-screen = pygame.display.set_mode((600,600))
+screen = pygame.display.set_mode((500,500))
 
-#Load all the images:
-#Load the background chess chess_board image:
-background = pygame.image.load(os.path.join('Media', 'board.png')).convert()
-#Load an image with all the pieces on it:
-pieces_image = pygame.image.load(os.path.join('Media', 'Chess_Pieces_Sprite.png')).convert_alpha()
-circle_image_green = pygame.image.load(os.path.join('Media', 'green_circle_small.png')).convert_alpha()
-circle_image_capture = pygame.image.load(os.path.join('Media', 'green_circle_neg.png')).convert_alpha()
-circle_image_red = pygame.image.load(os.path.join('Media', 'red_circle_big.png')).convert_alpha()
-greenbox_image = pygame.image.load(os.path.join('Media', 'green_box.png')).convert_alpha()
-circle_image_yellow = pygame.image.load(os.path.join('Media', 'yellow_circle_big.png')).convert_alpha()
-circle_image_green_big = pygame.image.load(os.path.join('Media', 'green_circle_big.png')).convert_alpha()
-yellowbox_image = pygame.image.load(os.path.join('Media', 'yellow_box.png')).convert_alpha()
-#Menu pictures:
-playwhite_pic = pygame.image.load(os.path.join('Media', 'start.png')).convert_alpha()
-
+# images for chess_board.
+background = pygame.image.load(os.path.join('Images_GUI', 'board.png')).convert()
+pieces_image = pygame.image.load(os.path.join('Images_GUI', 'Chess_Pieces_Sprite.png')).convert_alpha()
+circle_image_green = pygame.image.load(os.path.join('Images_GUI', 'green_circle_small.png')).convert_alpha()
+circle_image_capture = pygame.image.load(os.path.join('Images_GUI', 'green_circle_neg.png')).convert_alpha()
+circle_image_red = pygame.image.load(os.path.join('Images_GUI', 'red_circle_big.png')).convert_alpha()
+greenbox_image = pygame.image.load(os.path.join('Images_GUI', 'green_box.png')).convert_alpha()
+circle_image_yellow = pygame.image.load(os.path.join('Images_GUI', 'yellow_circle_big.png')).convert_alpha()
+circle_image_green_big = pygame.image.load(os.path.join('Images_GUI', 'green_circle_big.png')).convert_alpha()
+yellowbox_image = pygame.image.load(os.path.join('Images_GUI', 'yellow_box.png')).convert_alpha()
+playwhite_pic = pygame.image.load(os.path.join('Images_GUI', 'start.png')).convert_alpha()
 size_of_bg = background.get_rect().size
-
 square_width =int( size_of_bg[0]/8)
 square_height = int(size_of_bg[1]/8)
 
@@ -286,30 +290,25 @@ playwhite_pic = pygame.transform.scale(playwhite_pic,
 
 
 screen = pygame.display.set_mode(size_of_bg)
-pygame.display.set_caption('Shallow Green')
+pygame.display.set_caption('Chess AI')
 screen.blit(background,(0,0))
 
 
-list_of_white_pieces,list_of_black_pieces = create_pieces(chess_board)
+list_of_white_pieces,list_of_black_pieces = generate_piece(chess_board)
 
 list_of_shades = []
 
 clock = pygame.time.Clock()
-is_down = False #Variable that shows if the mouse is being held down
-               #onto a piece
-is_clicked = False #To keep track of whether a piece was clicked in order
-#to indicate intention to move by the user.
-is_transition = False #Keeps track of whether or not a piece is being animated.
-is_draw = False #Will store True if the game ended with a draw
-chess_ended = False #Will become True once the chess game ends by checkmate, stalemate, etc.
-is_record = False #Set this to True if you want to record moves to the Opening Book. Do not
-#set this to True unless you're 100% sure of what you're doing. The program will never modify
-#this value.
-is_aiThink = False #Stores whether or not the AI is calculating the best move to be played.
-# Initialize the opening book dictionary, and set its values to be lists by default:
+is_down = False
+is_clicked = False
+is_transition = False
+is_draw = False
+end_game = False
+is_record = False
+
+is_aiThink = False
 openings = defaultdict(list)
-#If openingTable.txt exists, read from it and load the opening moves to the local dictionary.
-#If it doesn't, create a new one to write to if Recording is enabled:
+
 try:
     file_handle = open('openingTable.txt', 'r+')
     openings = pickle.loads(file_handle.read())
@@ -317,38 +316,35 @@ except:
     if is_record:
         file_handle = open('openingTable.txt', 'w')
 
-searched = {} #Global variable that allows negamax to keep track of nodes that have
-#already been evaluated.
-prev_move = [-1,-1,-1,-1] #Also a global varible that stores the last move played, to
-#allow drawchess_board() to create Shades on the squares.
-#Initialize some more values:
-#For animating AI thinking graphics:
+# hold nodes that have been evaluated
+searched = {}
+prev_move = [-1,-1,-1,-1]
 ax,ay=0,0
 numm = 0
-#For showing the menu and keeping track of user choices:
 is_menu = True
 is_ai = True
 is_flip = -1
 ai_player = -1
-#Finally, a variable to keep false until the user wants to quit:
 game_ended = False
-#########################INFINITE LOOP#####################################
-#The program remains in this loop until the user quits the application
+
+
+#***********************************************************#
+#****************** infinite loop for the game **************
+#***********************************************************#
+
 while not game_ended:
 
     if is_menu:
-        #Menu needs to be shown right now.
-        #Blit the background:
         screen.blit(background,(0,0))
         if is_ai==True:
             screen.blit(playwhite_pic,(square_width*2,square_height*2))
         if is_flip!=-1:
-            drawchess_board()
+            plot_chess_game()
             is_menu = False
             if is_ai and ai_player==0:
                 color_sign=1
                 best_move_return = []
-                move_thread = threading.Thread(target = negamax,
+                move_thread = threading.Thread(target=negamax,
                             args = (position,6,-1000000,1000000,color_sign,best_move_return))
                 move_thread.start()
                 is_aiThink = True
@@ -374,7 +370,7 @@ while not game_ended:
         if ay==8:
             ax,ay=0,0
         if ax%4==0:
-            create_shades([])
+            create_piece_display([])
         if ai_player==0:
             list_of_shades.append(imageDispaly(greenbox_image,(7-ax,7-ay)))
         else:
@@ -386,12 +382,12 @@ while not game_ended:
             game_ended = True
 
             break
-        if chess_ended or is_transition or is_aiThink:
+        if end_game or is_transition or is_aiThink:
             continue
         if not is_down and event.type == MOUSEBUTTONDOWN:
 
             pos = pygame.mouse.get_pos()
-            chess_coord = pixel_coord_to_chess(pos)
+            chess_coord = pixel_to_coordinate(pos)
             chess_coord=(int(chess_coord[0]),int(chess_coord[1]))
 
             x =chess_coord[0]
@@ -404,7 +400,7 @@ while not game_ended:
             print(drag_piece)
             list_of_tuples = find_possible_squares(position,x,y)
 
-            create_shades(list_of_tuples)
+            create_piece_display(list_of_tuples)
 
             if ((drag_piece.pieceDisplayinfo[0]=='K') and
                 (is_check(position,'white') or is_check(position,'black'))):
@@ -416,7 +412,7 @@ while not game_ended:
             is_down = False
             drag_piece.set_pos((-1,-1))
             pos = pygame.mouse.get_pos()
-            chess_coord = pixel_coord_to_chess(pos)
+            chess_coord = pixel_to_coordinate(pos)
             chess_coord = (int(chess_coord[0]), int(chess_coord[1]))
             x2 = chess_coord[0]
             y2 = chess_coord[1]
@@ -435,7 +431,7 @@ while not game_ended:
 
                         is_clicked = False
 
-                        create_shades([])
+                        create_piece_display([])
                     else:
                         if is_occupied_by(chess_board,x2,y2,'wb'[player]):
 
@@ -443,7 +439,7 @@ while not game_ended:
                             prevPos = (x2,y2)
                         else:
                             is_clicked = False
-                            create_shades([])
+                            create_piece_display([])
                             is_transition = True
 
 
@@ -465,16 +461,16 @@ while not game_ended:
             HMC = position.get_HMC()
             if HMC>=100 or is_stalemate(position) or position.check_repetition():
                 is_draw = True
-                chess_ended = True
+                end_game = True
 
             if is_check_mate(position,'white'):
                 winner = 'b'
-                chess_ended = True
+                end_game = True
             if is_check_mate(position,'black'):
                 winner = 'w'
-                chess_ended = True
+                end_game = True
 
-            if is_ai and not chess_ended:
+            if is_ai and not end_game:
                 if player==0:
                     color_sign = 1
                 else:
@@ -486,24 +482,24 @@ while not game_ended:
                 is_aiThink = True
             drag_piece.set_coord((x2,y2))
             if not is_transition:
-                list_of_white_pieces,list_of_black_pieces = create_pieces(chess_board)
+                list_of_white_pieces,list_of_black_pieces = generate_piece(chess_board)
             else:
                 moving_piece = drag_piece
-                origin = chess_coord_to_pixels((x,y))
-                destiny = chess_coord_to_pixels((x2,y2))
+                origin = coordinate_to_pixel((x,y))
+                destiny = coordinate_to_pixel((x2,y2))
                 moving_piece.set_pos(origin)
                 step = (destiny[0]-origin[0],destiny[1]-origin[1])
 
-            create_shades([])
+            create_piece_display([])
     if is_transition:
         p,q = moving_piece.get_pos()
         dx2,dy2 = destiny
         n= 30.0
         if abs(p-dx2)<=abs(step[0]/n) and abs(q-dy2)<=abs(step[1]/n):
             moving_piece.set_pos((-1,-1))
-            list_of_white_pieces,list_of_black_pieces = create_pieces(chess_board)
+            list_of_white_pieces,list_of_black_pieces = generate_piece(chess_board)
             is_transition = False
-            create_shades([])
+            create_piece_display([])
         else:
             moving_piece.set_pos((p+step[0]/n,q+step[1]/n))
     if is_down:
@@ -514,7 +510,7 @@ while not game_ended:
         if not move_thread.isAlive():
 
             is_aiThink = False
-            create_shades([])
+            create_piece_display([])
             print(f"best_move_return: {best_move_return}")
             p1, p2 = best_move_return
             x,y = p1
@@ -526,21 +522,21 @@ while not game_ended:
             position.add_to_history(position)
             if HMC>=100 or is_stalemate(position) or position.check_repetition():
                 is_draw = True
-                chess_ended = True
+                end_game = True
             if is_check_mate(position,'white'):
                 winner = 'b'
-                chess_ended = True
+                end_game = True
             if is_check_mate(position,'black'):
                 winner = 'w'
-                chess_ended = True
+                end_game = True
             is_transition = True
             moving_piece = get_piece((x,y))
-            origin = chess_coord_to_pixels((x,y))
-            destiny = chess_coord_to_pixels((x2,y2))
+            origin = coordinate_to_pixel((x,y))
+            destiny = coordinate_to_pixel((x2,y2))
             moving_piece.set_pos(origin)
             step = (destiny[0]-origin[0],destiny[1]-origin[1])
 
-    drawchess_board()
+    plot_chess_game()
     pygame.display.update()
 
 
