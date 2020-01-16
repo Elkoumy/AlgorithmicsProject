@@ -3,7 +3,7 @@ The aim from this project is to use advanced algorithms for enhancing the run ti
 
 
 # Project satges:
-Chess AI has three main steps that can be summiriezed in below image. 
+Chess AI has flow chart can be shown in below image. 
                                   
 ![Screenshot](./Images_GUI/img445.png)
 
@@ -15,8 +15,10 @@ To run this project you have to install [pygame](https://www.pygame.org/news).
               
               
 # Sample of the output:
+![](./Images_GUI/img222.png)
 
-![Screenshot](out.png)
+
+
 
 
 
