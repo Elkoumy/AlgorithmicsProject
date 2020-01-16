@@ -8,7 +8,7 @@ class chessPosition:
     state of the game, like position of pieces on the board, whose has right to play next, etc.
     """
 
-    def __init__(self, chess_board, player, castling_rights, EnP_Target, HMC, history={}):
+    def __init__(self, chess_board, player, castling_rights, square_target, half_move_clock, history={}):
         # 2d array for piece position
         self.chess_board = chess_board
         # who has right to play, 0 for white, and 1 for black
@@ -16,9 +16,9 @@ class chessPosition:
         # castling rights
         self.castling = castling_rights
         # position coordinate that can be attacked by a passant.
-        self.EnP = EnP_Target
+        self.square_target = square_target
         # Half move clock
-        self.HMC = HMC
+        self.half_move_clock = half_move_clock
         # move history
         self.history = history
 
@@ -35,14 +35,14 @@ class chessPosition:
         return self.castling
     def set_castle_rights(self,castling_rights):
         self.castling = castling_rights
-    def get_EnP(self):
-        return self.EnP
-    def set_EnP(self, EnP_Target):
-        self.EnP = EnP_Target
-    def get_HMC(self):
-        return self.HMC
-    def set_HMC(self,HMC):
-        self.HMC = HMC
+    def get_square_target(self):
+        return self.square_target
+    def set_square_target(self, square_target):
+        self.square_target = square_target
+    def get_half_move_clock(self):
+        return self.half_move_clock
+    def set_half_move_clock(self,half_move_clock):
+        self.half_move_clock = half_move_clock
 
     def check_repetition(self):
         """
@@ -84,6 +84,6 @@ class chessPosition:
         clone = chessPosition(copy.deepcopy(self.chess_board),
                              self.player,
                              copy.deepcopy(self.castling),
-                             self.EnP,
-                             self.HMC)
+                             self.square_target,
+                             self.half_move_clock)
         return clone

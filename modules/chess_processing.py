@@ -271,8 +271,8 @@ def make_move(position, x, y, x2, y2):
     color = chess_board[y][x][1]
     player = position.get_player()
     castling_rights = position.get_castle_rights()
-    EnP_Target = position.get_EnP()
-    half_move_clock = position.get_HMC()
+    square_target = position.get_square_target()
+    half_move_clock = position.get_half_move_clock()
     if is_occupied(chess_board, x2, y2) or piece == 'P':
         half_move_clock = 0
     else:
@@ -309,29 +309,29 @@ def make_move(position, x, y, x2, y2):
             castling_rights[0][0] = False
 
     if piece == 'P':
-        if EnP_Target == (x2, y2):
+        if square_target == (x2, y2):
             if color == 'w':
                 chess_board[y2 + 1][x2] = 0
             else:
                 chess_board[y2 - 1][x2] = 0
         if abs(y2 - y) == 2:
-            EnP_Target = (x, (y + y2) / 2)
+            square_target = (x, (y + y2) / 2)
         else:
-            EnP_Target = -1
+            square_target = -1
 
         if y2 == 0:
             chess_board[y2][x2] = 'Qw'
         elif y2 == 7:
             chess_board[y2][x2] = 'Qb'
     else:
-        EnP_Target = -1
+        square_target = -1
 
     player = 1 - player
 
     position.set_player(player)
     position.set_castle_rights(castling_rights)
-    position.set_EnP(EnP_Target)
-    position.set_HMC(half_move_clock)
+    position.set_square_target(square_target)
+    position.set_half_move_clock(half_move_clock)
 
 
 def find_possible_squares(position, x, y, attack_search=False):
@@ -350,7 +350,7 @@ def find_possible_squares(position, x, y, attack_search=False):
     chess_board = position.getchess_board()
     player = position.get_player()
     castling_rights = position.get_castle_rights()
-    EnP_Target = position.get_EnP()
+    square_target = position.get_square_target()
 
     if len(chess_board[y][x]) != 2:
         return []
@@ -377,9 +377,9 @@ def find_possible_squares(position, x, y, attack_search=False):
                 list_of_tuples.append((x - 1, y - 1))
             if x != 7 and is_occupied_by(chess_board, x + 1, y - 1, 'black'):
                 list_of_tuples.append((x + 1, y - 1))
-            if EnP_Target != -1:
-                if EnP_Target == (x - 1, y - 1) or EnP_Target == (x + 1, y - 1):
-                    list_of_tuples.append(EnP_Target)
+            if square_target != -1:
+                if square_target == (x - 1, y - 1) or square_target == (x + 1, y - 1):
+                    list_of_tuples.append(square_target)
 
         elif color == 'b':
             if not is_occupied(chess_board, x, y + 1) and not attack_search:
@@ -390,8 +390,8 @@ def find_possible_squares(position, x, y, attack_search=False):
                 list_of_tuples.append((x - 1, y + 1))
             if x != 7 and is_occupied_by(chess_board, x + 1, y + 1, 'white'):
                 list_of_tuples.append((x + 1, y + 1))
-            if EnP_Target == (x - 1, y + 1) or EnP_Target == (x + 1, y + 1):
-                list_of_tuples.append(EnP_Target)
+            if square_target == (x - 1, y + 1) or square_target == (x + 1, y + 1):
+                list_of_tuples.append(square_target)
 
     elif piece == 'R':
         for i in [-1, 1]:
