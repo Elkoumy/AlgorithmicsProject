@@ -1,9 +1,3 @@
-'''
-In this file, we are going to implement the chess ai functions.
-Nesma
-2/1/2020
-'''
-
 from modules.evaluation import *
 import time
 MaxAllowedTimeInSeconds = 30
