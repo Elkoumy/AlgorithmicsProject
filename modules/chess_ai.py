@@ -4,13 +4,6 @@ Nesma
 2/1/2020
 '''
 
-from classes import *
-from collections import Counter #For counting elements in a list effieciently.
-from modules.chess_processing import all_moves
-from modules.chess_processing import make_move
-from modules.chess_processing import *
-from modules.chess_processing import pos_to_key
-from collections import defaultdict #Used for giving dictionary values default data types.
 from modules.evaluation import *
 import time
 MaxAllowedTimeInSeconds = 30

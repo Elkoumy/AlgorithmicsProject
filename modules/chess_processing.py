@@ -1,28 +1,33 @@
-'''
-In this file, we are going to implement the chess chess_board functions so they could be used by the main module.
-El Koumy
-31/12/2019
-
-'''
-
-from classes import GamePosition, Shades, Piece
-from modules import chess_ai
-
-
 def is_occupied(chess_board, x, y):
-    '''
-    Returns true if a given coordinate on the chess_board is not empty, and false otherwise.
-    '''
-    if chess_board[y][x] == 0:
+    """
+    Args:
+        chess_board:
+        x: x-axis coordinate
+        y: y-axis coordinate
+
+    Returns:
+        is_occupied function returns true if the input coordinate is not empty, and false on the other hand.
+    """
+
+    if chess_board[int(y)][int(x)]==0:
         return False
     return True
 
 
 def is_occupied_by(chess_board, x, y, color):
-    '''
-    Only returns true if the square specified by the coordinates is of the specific color inputted.
-    '''
-    if chess_board[y][x] == 0:
+    """
+
+    Args:
+        chess_board:
+        x: x-axis coordinate
+        y: y-axis coordinate
+        color: square color
+
+    Returns:
+        is_occupied_by function returns true or false based on the color of the square.
+    """
+
+    if chess_board[int(y)][int(x)]==0:
         return False
     if chess_board[y][x][1] == color[0]:
         return True
@@ -30,12 +35,18 @@ def is_occupied_by(chess_board, x, y, color):
 
 
 def filter_by_color(chess_board, list_of_tuples, color):
-    '''
-    This function takes the chess_board state, a list of coordinates, and a color as input. It will return the same list,
-    but without coordinates that are out of bounds of the chess_board and also without those occupied by the pieces of the
-    particular color passed to this function as an argument. In other words, if 'white' is passed in, it will not
-    return any white occupied square.
-    '''
+    """
+    This function filter pieces on the board based on the colors.
+    Args:
+        chess_board: 2d array of the board state
+        list_of_tuples: the same list as the input list
+        color: white or black
+
+    Returns:
+        this function return the filtered list based on the color.
+
+    """
+
     filtered_list = []
     for pos in list_of_tuples:
         x = pos[0]
@@ -47,10 +58,16 @@ def filter_by_color(chess_board, list_of_tuples, color):
 
 
 def look_for(chess_board, piece):
-    '''
-    This functions takes the 2D array that represents a chess_board and finds the indices of all the locations that is
-    occupied by the specified piece. The list of indices is returned.
-    '''
+    """
+
+    Args:
+        chess_board: 2d array of the board state
+        piece: any piece on the board.
+
+    Returns: this function returns list of indices w.r.t a specific piece
+
+    """
+
     list_of_locations = []
     for row in range(8):
         for col in range(8):
@@ -62,10 +79,18 @@ def look_for(chess_board, piece):
 
 
 def is_attacked_by(position, target_x, target_y, color):
-    '''
-    This function checks if the square specified by (target_x,target_y) coordinates is being attacked by any of a
-    specific colored set of pieces.
-    '''
+    """
+
+    Args:
+        position: position of the piece
+        target_x: x-coordinate
+        target_y: y-coordinate
+        color: color of the piece
+
+    Returns: this function returns a list of squares which are being attacked by any set of pieces.
+
+    """
+
     chess_board = position.getchess_board()
     color = color[0]
     list_of_attacked_squares = []
@@ -80,8 +105,15 @@ def is_attacked_by(position, target_x, target_y, color):
 
 def opp(color):
     """
-    Returns the complimentary color to the one passed. So inputting 'black' returns 'w', for example.
+
+    Args:
+        color: white or black
+
+    Returns:
+        this function returns the inverse color of the opponent
+
     """
+
     color = color[0]
     if color == 'w':
         oppcolor = 'b'
@@ -92,9 +124,15 @@ def opp(color):
 
 def is_check(position, color):
     """
-    This function takes a position as its input and checks if the King of the specified color is under attack by the
-    enemy. Returns true if that is the case, and false otherwise.
+
+    Args:
+        position: position to test attack
+        color: white or black
+
+    Returns: this function returns true if the king under attack of a specific piece
+
     """
+
     chess_board = position.getchess_board()
     color = color[0]
     enemy = opp(color)
@@ -105,9 +143,15 @@ def is_check(position, color):
 
 def is_check_mate(position, color=-1):
     """
-    This function tells you if a position is a checkmate. Color is an optional argument that may be passed to
-    specifically check for mate against a specific color.
+
+    Args:
+        position: piece position
+        color: white or black
+
+    Returns: this function returns true of the check mate, false otherwise.
+
     """
+
     if color == -1:
         return is_check_mate(position, 'white') or is_check_mate(position, 'b')
     color = color[0]
@@ -118,8 +162,14 @@ def is_check_mate(position, color=-1):
 
 def is_stalemate(position):
     """
-    This function checks if a particular position is a stalemate. If it is, it returns true, otherwise it returns false.
+
+    Args:
+        position: piece position
+
+    Returns: this function returns true if the specified position is a stalemate, false otherwise
+
     """
+
     player = position.get_player()
     if player == 0:
         color = 'w'
@@ -132,8 +182,15 @@ def is_stalemate(position):
 
 def get_all_pieces(position, color):
     """
-    This function returns a list of positions of all the pieces on the chess_board of a particular color.
+
+    Args:
+        position: piece position
+        color: white or black
+
+    Returns: this function returns all possible positions based on a specific color.
+
     """
+
     chess_board = position.getchess_board()
     list_of_pos = []
     for j in range(8):
@@ -145,9 +202,15 @@ def get_all_pieces(position, color):
 
 def all_moves(position, color):
     """
-    This function takes as its argument a position and a color/color_sign that represents a side. It generates a list
-    of all possible moves for that side and returns it.
+
+    Args:
+        position:  piece position
+        color: white or black side
+
+    Returns: this function returns all possible moves based on the current position and the current color
+
     """
+
     if color == 1:
         color = 'white'
     elif color == -1:
@@ -164,9 +227,14 @@ def all_moves(position, color):
 
 def pos_to_key(position):
     """
-    This function takes a position as input argument. For this particular position, it will generate a unique key
-    that can be used in a dictionary by making it hashable.
+
+    Args:
+        position: position of the piece
+
+    Returns: this function returns a unique key based on the position of the piece.
+
     """
+
     chess_board = position.getchess_board()
     chess_board_tuple = []
     for row in chess_board:
@@ -180,11 +248,19 @@ def pos_to_key(position):
 
 
 def make_move(position, x, y, x2, y2):
-    '''
-    This function makes a move on the chess_board. The position object gets updated here with new information. (x,y) are
-    coordinates of the piece to be moved, and (x2,y2) are coordinates of the destination. (x2,y2) being correct
-    destination (ie the move  a valid one) is not checked for and is assumed to be the case.
-    '''
+    """
+    this function used to make the actual move on the board
+    Args:
+        position:
+        x: x-axis of the source
+        y: y-axix of the source
+        x2: x-axis of the destination
+        y2: y-axis of the destination
+
+    Returns:
+
+    """
+
     chess_board = position.getchess_board()
     piece = chess_board[y][x][0]
     color = chess_board[y][x][1]
@@ -254,12 +330,17 @@ def make_move(position, x, y, x2, y2):
 
 
 def find_possible_squares(position, x, y, attack_search=False):
-    '''
-    This function takes as its input the current state of the chesschess_board, and a particular x and y coordinate.
-    It will return for the piece on that chess_board a list of possible coordinates it could move to, including captures
-    and excluding illegal moves (eg moves that leave a king under check). attack_search is an argument used to
-    ensure infinite recursions do not occur.
-    '''
+    """
+
+    Args:
+        position: piece position
+        x: x-axis
+        y: y-axis
+        attack_search: avoid unlimited recursion
+
+    Returns: this function returns a list of possible moves based on a specific position
+
+    """
 
     chess_board = position.getchess_board()
     player = position.get_player()
