@@ -1,18 +1,12 @@
-from classes import *
-from modules import chess_ai, chess_processing
-from classes.GamePosition import GamePosition
-from classes.Piece import Piece
-from classes.Shades import Shades
+from classes.chessPosition import chessPosition
+from classes.imageDisplay import imageDispaly
+from classes.pieceDisplay import pieceDisplay
 import pygame #Game library
 from pygame.locals import * #For useful variables
-import copy #Library used to make exact copies of lists.
 import pickle #Library used to store dictionaries in a text file and read them from text files.
-import random #Used for making random selections
-from collections import defaultdict #Used for giving dictionary values default data types.
-from collections import Counter #For counting elements in a list effieciently.
+
 import threading #To allow for AI to think simultaneously while the GUI is coloring the chess_board.
 import os #To allow path joining with cross-platform support
-from modules.chess_processing import *
 from modules.chess_ai import *
 
 ##############################////////GUI FUNCTIONS\\\\\\\\\\\\\#############################
@@ -46,7 +40,7 @@ def create_pieces(chess_board):
     for i in range(8):
         for k in range(8):
             if chess_board[i][k]!=0:
-                p = Piece.Piece(chess_board[i][k],(k,i),square_width,square_height)
+                p = pieceDisplay(chess_board[i][k],(k,i),square_width,square_height)
                 if chess_board[i][k][1]=='w':
                     list_of_white_pieces.append(p)
                 else:
@@ -63,10 +57,10 @@ def create_shades(list_of_tuples):
         #The game ended with a draw. Make yellow circle shades for
         #both the kings to show this is the case:
         coord = look_for(chess_board,'Kw')[0]
-        shade = Shades.Shades(circle_image_yellow,coord)
+        shade = imageDispaly(circle_image_yellow,coord)
         list_of_shades.append(shade)
         coord = look_for(chess_board,'Kb')[0]
-        shade = Shades.Shades(circle_image_yellow,coord)
+        shade = imageDispaly(circle_image_yellow,coord)
         list_of_shades.append(shade)
         #There is no need to go further:
         return
@@ -75,16 +69,16 @@ def create_shades(list_of_tuples):
         #draw if the code reached here.
         #Give the winning king a green circle shade:
         coord = look_for(chess_board,'K'+winner)[0]
-        shade = Shades.Shades(circle_image_green_big,coord)
+        shade = imageDispaly(circle_image_green_big,coord)
         list_of_shades.append(shade)
     #If either king is under attack, give them a red circle:
     if is_check(position,'white'):
         coord = look_for(chess_board,'Kw')[0]
-        shade = Shades.Shades(circle_image_red,coord)
+        shade = imageDispaly(circle_image_red,coord)
         list_of_shades.append(shade)
     if is_check(position,'black'):
         coord = look_for(chess_board,'Kb')[0]
-        shade = Shades.Shades(circle_image_red,coord)
+        shade = imageDispaly(circle_image_red,coord)
         list_of_shades.append(shade)
     #Go through all the target squares inputted:
     for pos in list_of_tuples:
@@ -95,7 +89,7 @@ def create_shades(list_of_tuples):
             img = circle_image_capture
         else:
             img = circle_image_green
-        shade = Shades.Shades(img,pos)
+        shade = imageDispaly(img,pos)
         list_of_shades.append(shade)
 def drawchess_board():
     #Blit the background:
@@ -182,8 +176,8 @@ En_Passant_Target = -1 #This variable will store a coordinate if there is a squa
                        #en passant captured on. Otherwise it stores -1, indicating lack of en passant
                        #targets.
 half_move_clock = 0 #This variable stores the number of reversible moves that have been played so far.
-#Generate an instance of GamePosition class to store the above data:
-position = GamePosition.GamePosition(chess_board,player,castling_rights,En_Passant_Target, half_move_clock)
+#Generate an instance of chessPosition class to store the above data:
+position = chessPosition(chess_board, player, castling_rights, En_Passant_Target, half_move_clock)
 #Store the piece square tables here so they can be accessed globally by pieceSquareTable() function:
 pawn_table = [  0,  0,  0,  0,  0,  0,  0,  0,
 50, 50, 50, 50, 50, 50, 50, 50,
@@ -382,9 +376,9 @@ while not game_ended:
         if ax%4==0:
             create_shades([])
         if ai_player==0:
-            list_of_shades.append(Shades.Shades(greenbox_image,(7-ax,7-ay)))
+            list_of_shades.append(imageDispaly(greenbox_image,(7-ax,7-ay)))
         else:
-            list_of_shades.append(Shades.Shades(greenbox_image,(ax,ay)))
+            list_of_shades.append(imageDispaly(greenbox_image,(ax,ay)))
 
     for event in pygame.event.get():
 
@@ -412,11 +406,11 @@ while not game_ended:
 
             create_shades(list_of_tuples)
 
-            if ((drag_piece.pieceinfo[0]=='K') and
+            if ((drag_piece.pieceDisplayinfo[0]=='K') and
                 (is_check(position,'white') or is_check(position,'black'))):
                 None
             else:
-                list_of_shades.append(Shades.Shades(greenbox_image,(x,y)))
+                list_of_shades.append(imageDispaly(greenbox_image,(x,y)))
             is_down = True
         if (is_down or is_clicked) and event.type == MOUSEBUTTONUP:
             is_down = False
@@ -469,7 +463,7 @@ while not game_ended:
             position.add_to_history(position)
 
             HMC = position.get_HMC()
-            if HMC>=100 or is_stalemate(position) or position.check_repitition():
+            if HMC>=100 or is_stalemate(position) or position.check_repetition():
                 is_draw = True
                 chess_ended = True
 
@@ -530,7 +524,7 @@ while not game_ended:
             player = position.get_player()
             HMC = position.get_HMC()
             position.add_to_history(position)
-            if HMC>=100 or is_stalemate(position) or position.check_repitition():
+            if HMC>=100 or is_stalemate(position) or position.check_repetition():
                 is_draw = True
                 chess_ended = True
             if is_check_mate(position,'white'):

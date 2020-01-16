@@ -1,4 +1,4 @@
 # __init__.py
-from .GamePosition import GamePosition
-from .Piece import Piece
-from .Shades import Shades
+from .chessPosition import chessPosition
+from .imageDisplay import imageDispaly
+from .pieceDisplay import pieceDisplay
