@@ -1,5 +1,5 @@
 # Chess AI
-The aim from this project is to use advanced algorithms for enhancing the run time/ improve the AI performance in the  chess game. Using AI to generate all possible moves (Search Space) from any chess board state, then looking for the best move within a reasonable time-limit.
+The aim from this project is to use advanced algorithms for enhancing the run time/ improve and AI performance in the  chess game. Using AI to generate all possible moves (Search Space) from any chess board state, then looking for the best move within a reasonable time-limit.
 
 
 # Project satges:
