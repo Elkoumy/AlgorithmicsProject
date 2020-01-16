@@ -1,5 +1,5 @@
 from classes import *
-from modules import chess_ai, chess_processing, GUI
+from modules import chess_ai, chess_processing
 from classes.GamePosition import GamePosition
 from classes.Piece import Piece
 from classes.Shades import Shades
@@ -487,7 +487,7 @@ while not game_ended:
                     color_sign = -1
                 best_move_return = []
                 move_thread = threading.Thread(target = negamax,
-                            args = (position,6,-1000000,1000000,color_sign,best_move_return))
+                            args = (position,3,-1000000,1000000,color_sign,best_move_return))
                 move_thread.start()
                 is_aiThink = True
             drag_piece.set_coord((x2,y2))

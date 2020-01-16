@@ -6,7 +6,7 @@ El Koumy
 '''
 
 from classes import GamePosition, Shades, Piece
-from modules import chess_ai,  GUI
+from modules import chess_ai
 
 
 def is_occupied(chess_board, x, y):
