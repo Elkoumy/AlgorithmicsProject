@@ -459,7 +459,7 @@ while not game_ended:
             position.add_to_history(position)
 
             half_move_clock = position.get_half_move_clock()
-            if half_move_clock>=100 or is_stalemate(position) or position.check_repetition():
+            if half_move_clock>=100 or is_stale(position) or position.check_repetition():
                 is_draw = True
                 end_game = True
 
@@ -520,7 +520,7 @@ while not game_ended:
             player = position.get_player()
             half_move_clock = position.get_half_move_clock()
             position.add_to_history(position)
-            if half_move_clock>=100 or is_stalemate(position) or position.check_repetition():
+            if half_move_clock>=100 or is_stale(position) or position.check_repetition():
                 is_draw = True
                 end_game = True
             if is_check_mate(position,'white'):

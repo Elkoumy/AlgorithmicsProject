@@ -154,19 +154,21 @@ def is_check_mate(position, color=-1):
 
     if color == -1:
         return is_check_mate(position, 'white') or is_check_mate(position, 'b')
+
+
     color = color[0]
     if is_check(position, color) and all_moves(position, color) == []:
         return True
     return False
 
 
-def is_stalemate(position):
+def is_stale(position):
     """
 
     Args:
         position: piece position
 
-    Returns: this function returns true if the specified position is a stalemate, false otherwise
+    Returns: this function returns stalemate condition, false otherwise
 
     """
 
@@ -278,45 +280,13 @@ def make_move(position, x, y, x2, y2):
 
     if piece == 'K':
 
-        castling_rights[player] = [False, False]
-        if abs(x2 - x) == 2:
-            if color == 'w':
-                l = 7
-            else:
-                l = 0
-
-            if x2 > x:
-                chess_board[l][5] = 'R' + color
-                chess_board[l][7] = 0
-            else:
-                chess_board[l][3] = 'R' + color
-                chess_board[l][0] = 0
+        knight_handling(castling_rights, chess_board, color, player, x, x2)
 
     if piece == 'R':
-        if x == 0 and y == 0:
-            castling_rights[1][1] = False
-        elif x == 7 and y == 0:
-            castling_rights[1][0] = False
-        elif x == 0 and y == 7:
-            castling_rights[0][1] = False
-        elif x == 7 and y == 7:
-            castling_rights[0][0] = False
+        rock_handling(castling_rights, x, y)
 
     if piece == 'P':
-        if square_target == (x2, y2):
-            if color == 'w':
-                chess_board[y2 + 1][x2] = 0
-            else:
-                chess_board[y2 - 1][x2] = 0
-        if abs(y2 - y) == 2:
-            square_target = (x, (y + y2) / 2)
-        else:
-            square_target = -1
-
-        if y2 == 0:
-            chess_board[y2][x2] = 'Qw'
-        elif y2 == 7:
-            chess_board[y2][x2] = 'Qb'
+        square_target = pawn_handling(chess_board, color, square_target, x, x2, y, y2)
     else:
         square_target = -1
 
@@ -326,6 +296,50 @@ def make_move(position, x, y, x2, y2):
     position.set_castle_rights(castling_rights)
     position.set_square_target(square_target)
     position.set_half_move_clock(half_move_clock)
+
+
+def pawn_handling(chess_board, color, square_target, x, x2, y, y2):
+    if square_target == (x2, y2):
+        if color == 'w':
+            chess_board[y2 + 1][x2] = 0
+        else:
+            chess_board[y2 - 1][x2] = 0
+    if abs(y2 - y) == 2:
+        square_target = (x, (y + y2) / 2)
+    else:
+        square_target = -1
+    if y2 == 0:
+        chess_board[y2][x2] = 'Qw'
+    elif y2 == 7:
+        chess_board[y2][x2] = 'Qb'
+    return square_target
+
+
+def rock_handling(castling_rights, x, y):
+    if x == 0 and y == 0:
+        castling_rights[1][1] = False
+    elif x == 7 and y == 0:
+        castling_rights[1][0] = False
+    elif x == 0 and y == 7:
+        castling_rights[0][1] = False
+    elif x == 7 and y == 7:
+        castling_rights[0][0] = False
+
+
+def knight_handling(castling_rights, chess_board, color, player, x, x2):
+    castling_rights[player] = [False, False]
+    if abs(x2 - x) == 2:
+        if color == 'w':
+            l = 7
+        else:
+            l = 0
+
+        if x2 > x:
+            chess_board[l][5] = 'R' + color
+            chess_board[l][7] = 0
+        else:
+            chess_board[l][3] = 'R' + color
+            chess_board[l][0] = 0
 
 
 def find_possible_squares(position, x, y, attack_search=False):
@@ -360,20 +374,24 @@ def find_possible_squares(position, x, y, attack_search=False):
     """
 
     if piece == 'P':
+        list_of_tuples_temp = list_of_tuples
+
         if color == 'w':
             if not is_occupied(chess_board, x, y - 1) and not attack_search:
-                list_of_tuples.append((x, y - 1))
+                list_of_tuples_temp.append((x, y - 1))
 
                 if y == 6 and not is_occupied(chess_board, x, y - 2):
-                    list_of_tuples.append((x, y - 2))
+                    list_of_tuples_temp.append((x, y - 2))
 
             if x != 0 and is_occupied_by(chess_board, x - 1, y - 1, 'black'):
-                list_of_tuples.append((x - 1, y - 1))
+                list_of_tuples_temp.append((x - 1, y - 1))
             if x != 7 and is_occupied_by(chess_board, x + 1, y - 1, 'black'):
-                list_of_tuples.append((x + 1, y - 1))
+                list_of_tuples_temp.append((x + 1, y - 1))
             if square_target != -1:
                 if square_target == (x - 1, y - 1) or square_target == (x + 1, y - 1):
-                    list_of_tuples.append(square_target)
+                    list_of_tuples_temp.append(square_target)
+
+
 
         elif color == 'b':
             if not is_occupied(chess_board, x, y + 1) and not attack_search:
