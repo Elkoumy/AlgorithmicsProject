@@ -61,8 +61,8 @@ interesting results.
 * This project has been done for [Algorithmics (MTAT.03.238)](https://courses.cs.ut.ee/2019/algorithmics/fall) course at the University of Tartu under the supervision of Jaak Vilo, Dmytro Fishman, and Joonas Puura.
 
 # Refrences
-[1] https://www.freecodecamp.org/news/simple-chess-ai-step-by-step-1d55a9266977/
-[2] https://www.chessprogramming.org/Main_Page
-[3] Campbell, Murray, A. Joseph Hoane Jr, and Feng-hsiung Hsu. "Deep blue." Artificial intelligence 134.1-2 (2002): 57-83.
+[1] https://www.freecodecamp.org/news/simple-chess-ai-step-by-step-1d55a9266977/ <br/>
+[2] https://www.chessprogramming.org/Main_Page <br/>
+[3] Campbell, Murray, A. Joseph Hoane Jr, and Feng-hsiung Hsu. "Deep blue." Artificial intelligence 134.1-2 (2002): 57-83. <br/>
 [4] https://www.youtube.com/watch?v=STjW3eH0Cik
 
