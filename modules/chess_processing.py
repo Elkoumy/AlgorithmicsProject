@@ -11,24 +11,23 @@ def is_occupied_by(chess_board, x, y, square_color):
         is_occupied_by function returns true or false based on the color of the square.
     """
 
-    if chess_board[int(y)][int(x)]==0:
+    if chess_board[int(y)][int(x)] == 0:
         return False
     if chess_board[y][x][1] == square_color[0]:
         return True
     return False
 
 
-
 def filter_by_color(chess_board, input_list, player_color):
     """
-    This function filter pieces on the board based on the colors.
+
     Args:
         chess_board: 2d array of the board state
         input_list: the same list as the input list
         player_color: white or black
 
     Returns:
-        this function return the filtered list based on the color.
+        this function return the filtered list of pieces based on the color.
 
     """
 
@@ -37,7 +36,6 @@ def filter_by_color(chess_board, input_list, player_color):
         x = i[0]
         y = i[1]
         if x >= 0 and x <= 7 and y >= 0 and y <= 7 and not is_occupied_by(chess_board, x, y, player_color):
-
             filtered.append(i)
     return filtered
 
@@ -53,13 +51,9 @@ def is_occupied(chess_board, x, y):
         is_occupied function returns true if the input coordinate is not empty, and false on the other hand.
     """
 
-    if chess_board[int(y)][int(x)]==0:
+    if chess_board[int(y)][int(x)] == 0:
         return False
     return True
-
-
-
-
 
 
 def look_for(chess_board, piece):
@@ -80,6 +74,7 @@ def look_for(chess_board, piece):
                 y = row
                 positions.append((x, y))
     return positions
+
 
 def opp(color):
     """
@@ -118,13 +113,13 @@ def is_attacked_by(position, target_x, target_y, color):
     list_of_attacked_squares = []
     for x in range(8):
         for y in range(8):
-            if chess_board[y][x] != 0 and chess_board[y][x][1] == color:
-                list_of_attacked_squares.extend(
-                    find_possible_squares(position, x, y, True))  # The true argument
+            if chess_board[y][x] != 0:
+
+                if chess_board[y][x][1] == color:
+                    list_of_attacked_squares.extend(
+                        find_possible_squares(position, x, y, True))
 
     return (target_x, target_y) in list_of_attacked_squares
-
-
 
 
 def is_check(position, color):
@@ -280,7 +275,6 @@ def make_move(position, x, y, x2, y2):
 
     chess_board[y2][x2] = chess_board[y][x]
     chess_board[y][x] = 0
-
 
     if piece == 'K':
 
@@ -492,7 +486,7 @@ def find_possible_squares(position, x, y, attack_search=False):
         new_list = []
         for tuple_q in list_of_tuples:
             x2 = int(tuple_q[0])
-            y2 =int( tuple_q[1])
+            y2 = int(tuple_q[1])
             temp_pos = position.clone()
             make_move(temp_pos, x, y, x2, y2)
             if not is_check(temp_pos, color):
