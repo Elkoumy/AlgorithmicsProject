@@ -5,7 +5,7 @@ The aim from this project is to use advanced algorithms for enhancing the run ti
 # Project satges:
 Chess AI has three main steps that can be summiriezed in below image. 
                                   
-![Screenshot](./imges_GUI/img445.png)
+![Screenshot](./Images_GUI/img445.png)
 
 # Run This Project:
 To run this project you have to install [pygame](https://www.pygame.org/news).
