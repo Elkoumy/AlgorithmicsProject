@@ -1,3 +1,47 @@
+def is_occupied_by(chess_board, x, y, square_color):
+    """
+
+    Args:
+        chess_board:
+        x: x-axis coordinate
+        y: y-axis coordinate
+        square_color: square color
+
+    Returns:
+        is_occupied_by function returns true or false based on the color of the square.
+    """
+
+    if chess_board[int(y)][int(x)]==0:
+        return False
+    if chess_board[y][x][1] == square_color[0]:
+        return True
+    return False
+
+
+
+def filter_by_color(chess_board, input_list, player_color):
+    """
+    This function filter pieces on the board based on the colors.
+    Args:
+        chess_board: 2d array of the board state
+        input_list: the same list as the input list
+        player_color: white or black
+
+    Returns:
+        this function return the filtered list based on the color.
+
+    """
+
+    filtered = []
+    for i in input_list:
+        x = i[0]
+        y = i[1]
+        if x >= 0 and x <= 7 and y >= 0 and y <= 7 and not is_occupied_by(chess_board, x, y, player_color):
+
+            filtered.append(i)
+    return filtered
+
+
 def is_occupied(chess_board, x, y):
     """
     Args:
@@ -14,52 +58,12 @@ def is_occupied(chess_board, x, y):
     return True
 
 
-def is_occupied_by(chess_board, x, y, color):
-    """
-
-    Args:
-        chess_board:
-        x: x-axis coordinate
-        y: y-axis coordinate
-        color: square color
-
-    Returns:
-        is_occupied_by function returns true or false based on the color of the square.
-    """
-
-    if chess_board[int(y)][int(x)]==0:
-        return False
-    if chess_board[y][x][1] == color[0]:
-        return True
-    return False
 
 
-def filter_by_color(chess_board, list_of_tuples, color):
-    """
-    This function filter pieces on the board based on the colors.
-    Args:
-        chess_board: 2d array of the board state
-        list_of_tuples: the same list as the input list
-        color: white or black
-
-    Returns:
-        this function return the filtered list based on the color.
-
-    """
-
-    filtered_list = []
-    for pos in list_of_tuples:
-        x = pos[0]
-        y = pos[1]
-        if x >= 0 and x <= 7 and y >= 0 and y <= 7 and not is_occupied_by(chess_board, x, y, color):
-
-            filtered_list.append(pos)
-    return filtered_list
 
 
 def look_for(chess_board, piece):
     """
-
     Args:
         chess_board: 2d array of the board state
         piece: any piece on the board.
@@ -68,14 +72,32 @@ def look_for(chess_board, piece):
 
     """
 
-    list_of_locations = []
+    positions = []
     for row in range(8):
         for col in range(8):
             if chess_board[row][col] == piece:
                 x = col
                 y = row
-                list_of_locations.append((x, y))
-    return list_of_locations
+                positions.append((x, y))
+    return positions
+
+def opp(color):
+    """
+
+    Args:
+        color: white or black
+
+    Returns:
+        this function returns the inverse color of the opponent
+
+    """
+
+    color = color[0]
+    if color == 'w':
+        oppcolor = 'b'
+    else:
+        oppcolor = 'w'
+    return oppcolor
 
 
 def is_attacked_by(position, target_x, target_y, color):
@@ -103,23 +125,6 @@ def is_attacked_by(position, target_x, target_y, color):
     return (target_x, target_y) in list_of_attacked_squares
 
 
-def opp(color):
-    """
-
-    Args:
-        color: white or black
-
-    Returns:
-        this function returns the inverse color of the opponent
-
-    """
-
-    color = color[0]
-    if color == 'w':
-        oppcolor = 'b'
-    else:
-        oppcolor = 'w'
-    return oppcolor
 
 
 def is_check(position, color):
@@ -266,8 +271,8 @@ def make_move(position, x, y, x2, y2):
     color = chess_board[y][x][1]
     player = position.get_player()
     castling_rights = position.get_castle_rights()
-    EnP_Target = position.get_EnP()
-    half_move_clock = position.get_HMC()
+    square_target = position.get_square_target()
+    half_move_clock = position.get_half_move_clock()
     if is_occupied(chess_board, x2, y2) or piece == 'P':
         half_move_clock = 0
     else:
@@ -304,29 +309,29 @@ def make_move(position, x, y, x2, y2):
             castling_rights[0][0] = False
 
     if piece == 'P':
-        if EnP_Target == (x2, y2):
+        if square_target == (x2, y2):
             if color == 'w':
                 chess_board[y2 + 1][x2] = 0
             else:
                 chess_board[y2 - 1][x2] = 0
         if abs(y2 - y) == 2:
-            EnP_Target = (x, (y + y2) / 2)
+            square_target = (x, (y + y2) / 2)
         else:
-            EnP_Target = -1
+            square_target = -1
 
         if y2 == 0:
             chess_board[y2][x2] = 'Qw'
         elif y2 == 7:
             chess_board[y2][x2] = 'Qb'
     else:
-        EnP_Target = -1
+        square_target = -1
 
     player = 1 - player
 
     position.set_player(player)
     position.set_castle_rights(castling_rights)
-    position.set_EnP(EnP_Target)
-    position.set_HMC(half_move_clock)
+    position.set_square_target(square_target)
+    position.set_half_move_clock(half_move_clock)
 
 
 def find_possible_squares(position, x, y, attack_search=False):
@@ -345,7 +350,7 @@ def find_possible_squares(position, x, y, attack_search=False):
     chess_board = position.getchess_board()
     player = position.get_player()
     castling_rights = position.get_castle_rights()
-    EnP_Target = position.get_EnP()
+    square_target = position.get_square_target()
 
     if len(chess_board[y][x]) != 2:
         return []
@@ -372,9 +377,9 @@ def find_possible_squares(position, x, y, attack_search=False):
                 list_of_tuples.append((x - 1, y - 1))
             if x != 7 and is_occupied_by(chess_board, x + 1, y - 1, 'black'):
                 list_of_tuples.append((x + 1, y - 1))
-            if EnP_Target != -1:
-                if EnP_Target == (x - 1, y - 1) or EnP_Target == (x + 1, y - 1):
-                    list_of_tuples.append(EnP_Target)
+            if square_target != -1:
+                if square_target == (x - 1, y - 1) or square_target == (x + 1, y - 1):
+                    list_of_tuples.append(square_target)
 
         elif color == 'b':
             if not is_occupied(chess_board, x, y + 1) and not attack_search:
@@ -385,8 +390,8 @@ def find_possible_squares(position, x, y, attack_search=False):
                 list_of_tuples.append((x - 1, y + 1))
             if x != 7 and is_occupied_by(chess_board, x + 1, y + 1, 'white'):
                 list_of_tuples.append((x + 1, y + 1))
-            if EnP_Target == (x - 1, y + 1) or EnP_Target == (x + 1, y + 1):
-                list_of_tuples.append(EnP_Target)
+            if square_target == (x - 1, y + 1) or square_target == (x + 1, y + 1):
+                list_of_tuples.append(square_target)
 
     elif piece == 'R':
         for i in [-1, 1]:

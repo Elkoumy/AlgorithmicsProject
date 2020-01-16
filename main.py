@@ -458,8 +458,8 @@ while not game_ended:
             player = position.get_player()
             position.add_to_history(position)
 
-            HMC = position.get_HMC()
-            if HMC>=100 or is_stalemate(position) or position.check_repetition():
+            half_move_clock = position.get_half_move_clock()
+            if half_move_clock>=100 or is_stalemate(position) or position.check_repetition():
                 is_draw = True
                 end_game = True
 
@@ -518,9 +518,9 @@ while not game_ended:
             make_move(position,x,y,x2,y2)
             prev_move = [x,y,x2,y2]
             player = position.get_player()
-            HMC = position.get_HMC()
+            half_move_clock = position.get_half_move_clock()
             position.add_to_history(position)
-            if HMC>=100 or is_stalemate(position) or position.check_repetition():
+            if half_move_clock>=100 or is_stalemate(position) or position.check_repetition():
                 is_draw = True
                 end_game = True
             if is_check_mate(position,'white'):
