@@ -18,47 +18,47 @@ To run this project you have to install [pygame](https://www.pygame.org/news).
 ![](./Images_GUI/img222.png)
 
 # Methods:
-1. NegaMax: a tree searching algorithm derived
+* **NegaMax:** a tree searching algorithm derived
 from minimax, which looks to the future to
 minimizes the maximum value that your opponent
 can take from you and decide how best to make
 your next move.
-2. Alpha-beta pruning: used to decrease the
+* **Alpha-beta** pruning: used to decrease the
 number of nodes that are evaluated by the
 negamax algorithm.
 
 
 # Contribution:
-1. Evaluation function that uses the following
+* **Evaluation function** that uses the following
 heuristics (defined by chess players):
-• A. Further developed pieces are better.
-• B. Doubled Pawns are not good
-• C. Isolated Pawns are not good
-2. Iterative Deepening: It is the improvement for
+  * Further developed pieces are better.
+  * Doubled Pawns are not good
+  * Isolated Pawns are not good
+* **Iterative Deepening:** It is the improvement for
 depth-limited search, Instead of specifying a fixed
 search depth, It starts working with depth 1, then
 depth 2, and continue incrementing the depth until
 the time allocated for the search is exhausted
-3. Multi-Threading: We implement the search in the
+* **Multi-Threading:** We implement the search in the
 search tree to execute in parallel to reduce the total
 execution time.
-4. We cache the evaluated steps, so we can make
+* We cache the evaluated steps, so we can make
 use of them in case of repetition to reduce the
 execution time.
-5. We handle the end phase of the game in a
+* We handle the end phase of the game in a
 special way and we use previously evaluated
 positions from online chess databases that contain
 the games of master players.
 
 # Future work:
-Applying further enhancement would make the
+* Applying further enhancement would make the
 engine better. We think that applying methods like
 Neural Network, Genetic Algorithms, and random
 selection in the evaluation function would have
 interesting results.
 
 # AlgorithmicsProject
-This project has been done for [Algorithmics (MTAT.03.238)](https://courses.cs.ut.ee/2019/algorithmics/fall) course at the University of Tartu under the supervision of Jaak Vilo, Dmytro Fishman, and Joonas Puura.
+* This project has been done for [Algorithmics (MTAT.03.238)](https://courses.cs.ut.ee/2019/algorithmics/fall) course at the University of Tartu under the supervision of Jaak Vilo, Dmytro Fishman, and Joonas Puura.
 
 # Refrences
 [1] https://www.freecodecamp.org/news/simple-chess-ai-step-by-step-1d55a9266977/
