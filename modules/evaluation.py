@@ -1,12 +1,4 @@
-"""
-The evaluation function is to perform the evaluation used by the AI negamax algorithm to evaluate possible movements
-El Koumy
-8/1/2020
-"""
-from modules.chess_processing import *
-from classes import *
 from modules.chess_ai import  *
-from collections import defaultdict
 from collections import Counter
 
 pawn_table = [  0,  0,  0,  0,  0,  0,  0,  0,
